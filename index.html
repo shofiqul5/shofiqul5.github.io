@@ -6,114 +6,127 @@
 <title>Abid — MD Shofiqul Islam</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 <style>
   :root{
-    --bg:#0B0D0C;
-    --bg-alt:#111412;
-    --text:#EDEFEC;
-    --muted:#8A9089;
-    --accent:#B9FF3B;
-    --line:rgba(237,239,236,0.10);
+    --paper:#F4ECDA;
+    --paper-alt:#ECE1C8;
+    --ink:#241F1B;
+    --ink-soft:#6B6155;
+    --rule:#B23A48;
+    --code:#1F6F5C;
+    --line:rgba(36,31,27,0.16);
+    --line-strong:rgba(36,31,27,0.28);
   }
   *{margin:0;padding:0;box-sizing:border-box;}
   html{scroll-behavior:smooth;}
   body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:'Space Grotesk',sans-serif;
+    background:var(--paper);
+    color:var(--ink);
+    font-family:'Inter',sans-serif;
+    background-image:
+      linear-gradient(var(--paper) 0px, var(--paper) 30px, rgba(36,31,27,0.045) 31px);
+    background-size:100% 31px;
   }
   body.loading{overflow:hidden;}
-
-  /* Preloader intro */
-  .preloader{
-    position:fixed;inset:0;z-index:9999;
-    background:var(--bg);
-    display:flex;flex-direction:column;align-items:center;justify-content:center;gap:18px;
-    transition:opacity .6s ease, visibility .6s ease;
-  }
-  .preloader.hide{opacity:0;visibility:hidden;pointer-events:none;}
-  .preloader-name{
-    display:flex;font-size:clamp(3rem,11vw,7.5rem);font-weight:700;
-    letter-spacing:0.04em;perspective:600px;
-  }
-  .preloader-name span{
-    display:inline-block;color:var(--accent);
-    opacity:0;transform-origin:top center;
-    transform:rotateX(-90deg) translateY(-10px);
-    animation:letterFlip .55s cubic-bezier(.22,1,.36,1) forwards;
-  }
-  .preloader-name span:nth-child(1){animation-delay:0.05s;}
-  .preloader-name span:nth-child(2){animation-delay:0.15s;}
-  .preloader-name span:nth-child(3){animation-delay:0.25s;}
-  .preloader-name span:nth-child(4){animation-delay:0.35s;}
-  .preloader-name.exit{
-    animation:slideUpOut .55s cubic-bezier(.5,0,.75,0) forwards;
-  }
-  .preloader-underline{
-    width:0;height:2px;background:var(--accent);
-    animation:drawLine .4s ease forwards;
-    animation-delay:0.9s;
-  }
-  .preloader.exiting .preloader-underline{
-    animation:retractLine .35s ease forwards;
-  }
-  @keyframes letterFlip{
-    to{opacity:1;transform:rotateX(0deg) translateY(0);}
-  }
-  @keyframes slideUpOut{
-    to{opacity:0;transform:translateY(-60px);}
-  }
-  @keyframes drawLine{ to{width:80px;} }
-  @keyframes retractLine{ to{width:0;} }
-  .mono{font-family:'JetBrains Mono',monospace;}
-  .container{max-width:980px;margin:0 auto;padding:0 28px;}
+  .mono{font-family:'IBM Plex Mono',monospace;}
+  .display{font-family:'Fraunces',serif;}
+  .container{max-width:960px;margin:0 auto;padding:0 28px 0 64px;position:relative;}
   a{color:inherit;}
 
-  /* Fixed top-right cluster: avatar + nav pill */
-  .top-right-cluster{
-    position:fixed;top:18px;right:18px;z-index:100;
-    display:flex;align-items:center;gap:10px;
-    transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+  /* Margin rule running down the whole page — the notebook spine */
+  .margin-rule{
+    position:fixed;top:0;left:36px;bottom:0;width:2px;
+    background:var(--rule);opacity:0.65;z-index:5;pointer-events:none;
   }
-  .top-right-cluster.nav-hidden{
-    transform:translateY(-90px);
-    opacity:0;
-  }
-  nav#navPill{
-    background:rgba(17,20,18,0.85);
-    backdrop-filter:blur(10px);
-    border:1px solid var(--line);
-    border-radius:40px;
-    padding:6px;
-    display:inline-flex;align-items:center;justify-content:center;
+  .margin-rule::before,.margin-rule::after{content:"";}
+  .punch{
+    position:fixed;left:22px;width:9px;height:9px;border-radius:50%;
+    background:var(--paper);border:1.5px solid var(--line-strong);z-index:6;
   }
 
-  /* 3-dot menu button */
+  /* Preloader: curtain reveal — ruled bars descend away as letters fade in */
+  .preloader{
+    position:fixed;inset:0;z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    pointer-events:none;
+  }
+  .curtain-bars{
+    position:absolute;inset:0;display:flex;z-index:1;
+  }
+  .curtain-bars .bar{
+    flex:1;height:100%;background:var(--ink);
+    transform:translateY(0);
+    transition:transform .85s cubic-bezier(.65,0,.35,1);
+  }
+  .curtain-bars .bar:nth-child(odd){background:#2C2620;}
+  .curtain-bars.exit .bar{transform:translateY(100%);}
+  .curtain-letters{
+    position:relative;z-index:2;display:flex;gap:0.06em;
+    transition:opacity .4s ease;
+  }
+  .curtain-letters.exit{opacity:0;}
+  .curtain-letters span{
+    font-family:'Fraunces',serif;font-weight:900;font-style:italic;
+    font-size:clamp(2.6rem,9vw,5.5rem);color:#EDE4CE;line-height:1;
+    opacity:0;transform:translateY(28px);
+    animation:letterIn .65s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  .curtain-letters span:nth-child(1){animation-delay:.15s;}
+  .curtain-letters span:nth-child(2){animation-delay:.24s;}
+  .curtain-letters span:nth-child(3){animation-delay:.33s;}
+  .curtain-letters span:nth-child(4){animation-delay:.42s;}
+  .curtain-caption{
+    position:absolute;bottom:14%;left:0;right:0;text-align:center;z-index:2;
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;letter-spacing:0.18em;
+    color:rgba(237,228,206,0.55);text-transform:uppercase;
+    opacity:0;animation:capIn .5s ease forwards;animation-delay:.6s;
+    transition:opacity .3s ease;
+  }
+  .curtain-caption.exit{opacity:0 !important;}
+  @keyframes letterIn{ to{ opacity:1; transform:translateY(0); } }
+  @keyframes capIn{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .curtain-bars .bar,.curtain-letters span,.curtain-caption{transition:none;animation:none;opacity:1;transform:none;}
+  }
+
+  /* Top-right cluster */
+  .top-right-cluster{
+    position:fixed;top:18px;right:18px;z-index:100;
+    transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+  }
+  .top-right-cluster.nav-hidden{ transform:translateY(-90px); opacity:0; }
+  nav#navPill{
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:8px;
+    padding:6px;
+    display:inline-flex;align-items:center;justify-content:center;
+    box-shadow:3px 3px 0 var(--ink);
+  }
   .menu-btn{
     display:flex;flex-direction:column;justify-content:center;align-items:center;
     gap:4px;background:none;border:none;cursor:pointer;padding:10px;
   }
   .menu-btn span{
-    width:4px;height:4px;border-radius:50%;background:var(--text);
+    width:4px;height:4px;border-radius:50%;background:var(--ink);
     transition:transform .35s ease, opacity .3s ease, width .35s ease, border-radius .35s ease, background .35s ease;
   }
-  .menu-btn:hover span{background:var(--accent);}
-  .menu-btn.active span{background:var(--accent);}
+  .menu-btn:hover span{background:var(--rule);}
+  .menu-btn.active span{background:var(--rule);}
   .menu-btn.active span:nth-child(1){width:18px;border-radius:2px;transform:translateY(8px) rotate(45deg);}
   .menu-btn.active span:nth-child(2){opacity:0;transform:scale(0);}
   .menu-btn.active span:nth-child(3){width:18px;border-radius:2px;transform:translateY(-8px) rotate(-45deg);}
 
-  /* Mobile slide menu */
   .mobile-overlay{
-    display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);
+    display:none;position:fixed;inset:0;background:rgba(36,31,27,0.5);
     z-index:150;opacity:0;transition:opacity .3s ease;
   }
   .mobile-overlay.active{display:block;opacity:1;}
   .mobile-menu{
     position:fixed;top:0;right:-260px;width:240px;height:100%;
-    background:var(--bg-alt);border-left:1px solid var(--line);
+    background:var(--paper);border-left:2px solid var(--ink);
     z-index:200;padding:90px 26px;list-style:none;
     transition:right .4s cubic-bezier(.22,1,.36,1);
   }
@@ -131,209 +144,235 @@
   .mobile-menu.active li:nth-child(5){transition-delay:.32s;}
   .mobile-menu.active li:nth-child(6){transition-delay:.38s;}
   .mobile-menu a{
-    text-decoration:none;color:var(--text);font-family:'JetBrains Mono',monospace;
+    text-decoration:none;color:var(--ink);font-family:'IBM Plex Mono',monospace;
     font-size:0.95rem;display:flex;align-items:center;gap:10px;
   }
-  .mobile-menu a:hover{color:var(--accent);}
-  .mobile-menu a i{color:var(--accent);width:16px;}
+  .mobile-menu a:hover{color:var(--rule);}
+  .mobile-menu a i{color:var(--rule);width:16px;}
 
-  section{padding:110px 0;border-bottom:1px solid var(--line);}
-  .eyebrow{
-    font-family:'JetBrains Mono',monospace;font-size:0.8rem;
-    color:var(--accent);letter-spacing:0.08em;margin-bottom:18px;
-    display:flex;align-items:center;gap:10px;
+  section{padding:96px 0;border-bottom:1px solid var(--line);}
+
+  /* Margin note — replaces eyebrow, looks like a rotated sticky tab pinned in the margin */
+  .margin-note{
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;
+    color:#fff;background:var(--rule);
+    letter-spacing:0.06em;margin-bottom:22px;
+    display:inline-block;padding:4px 10px;border-radius:2px;
+    transform:rotate(-2deg);
+    box-shadow:2px 2px 0 var(--ink);
   }
-  .eyebrow::before{content:"";width:22px;height:1px;background:var(--accent);}
 
-  /* Hero — redesigned as two-column with large monogram */
-  .hero{padding-top:150px;border-bottom:1px solid var(--line);}
+  /* Hero */
+  .hero{padding-top:140px;}
   .hero-grid{
     display:grid;grid-template-columns:1.3fr 0.7fr;gap:50px;align-items:center;
   }
+  .hero-eyebrow{
+    font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--code);
+    margin-bottom:18px;
+  }
+  .hero-eyebrow .prompt{color:var(--rule);margin-right:6px;}
   .hero h1{
-    font-size:clamp(2.6rem,6.5vw,4.6rem);
-    font-weight:700;line-height:1.02;letter-spacing:-0.02em;
-    text-transform:uppercase;
-    margin-bottom:26px;
+    font-family:'Fraunces',serif;font-weight:900;font-style:normal;
+    font-size:clamp(2.4rem,6vw,4.2rem);
+    line-height:1.03;letter-spacing:-0.01em;
+    margin-bottom:22px;
   }
-  .hero h1 span{color:var(--accent);}
+  .hero h1 em{font-style:italic;color:var(--rule);font-weight:600;}
   .hero p{
-    max-width:520px;color:var(--muted);font-size:1.05rem;line-height:1.7;
-    margin-bottom:34px;
+    max-width:520px;color:var(--ink-soft);font-size:1.06rem;line-height:1.75;
+    margin-bottom:32px;
   }
-  .hero-cta{display:flex;gap:16px;flex-wrap:wrap;}
+  .hero-cta{display:flex;gap:14px;flex-wrap:wrap;}
   .btn{
-    font-family:'JetBrains Mono',monospace;font-size:0.85rem;
-    padding:13px 24px;border-radius:3px;text-decoration:none;
-    display:inline-flex;align-items:center;gap:8px;transition:all .2s;
+    font-family:'IBM Plex Mono',monospace;font-size:0.85rem;
+    padding:12px 22px;border-radius:4px;text-decoration:none;
+    display:inline-flex;align-items:center;gap:8px;
+    border:1.5px solid var(--ink);transition:transform .15s ease, box-shadow .15s ease;
   }
-  .btn-fill{background:var(--accent);color:var(--bg);font-weight:500;}
-  .btn-fill:hover{opacity:0.85;}
-  .btn-line{border:1px solid var(--line);color:var(--text);}
-  .btn-line:hover{border-color:var(--accent);color:var(--accent);}
+  .btn-fill{background:var(--ink);color:var(--paper);box-shadow:3px 3px 0 var(--rule);}
+  .btn-line{background:transparent;color:var(--ink);box-shadow:3px 3px 0 var(--ink);}
+  .btn:hover{transform:translate(-2px,-2px);}
+  .btn-fill:hover{box-shadow:5px 5px 0 var(--rule);}
+  .btn-line:hover{box-shadow:5px 5px 0 var(--ink);}
 
+  /* Avatar — postage stamp, torn from a sheet, postmarked from Kushtia */
   .hero-avatar-wrap{display:flex;justify-content:center;align-items:center;}
-  .avatar-frame{
-    position:relative;
-    width:min(280px,80%);
+  .stamp{
+    position:relative;width:min(230px,78%);
+    padding:16px;background:#fffdf8;
+    box-shadow:0 10px 26px rgba(36,31,27,0.22);
+    transform:rotate(-4deg);
+    transition:transform .4s cubic-bezier(.22,1,.36,1);
   }
-  .avatar-photo-large{
-    width:100%;aspect-ratio:1/1;border-radius:14px;
-    background:radial-gradient(circle at 30% 30%, rgba(185,255,59,0.20), transparent 60%), var(--bg-alt);
-    border:1px solid var(--line);
-    overflow:hidden;
-    position:relative;
+  .stamp:hover{transform:rotate(0deg) scale(1.02);}
+  /* perforated edge: four radial-gradient rows cut circular notches into each side */
+  .stamp::before{
+    content:"";position:absolute;inset:0;pointer-events:none;
+    background:
+      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) top left / 18px 18px repeat-x,
+      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) bottom left / 18px 18px repeat-x,
+      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) top left / 18px 18px repeat-y,
+      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) top right / 18px 18px repeat-y;
   }
-  .avatar-photo-large img{
+  .stamp-inner{
+    position:relative;border:1.5px dashed var(--line-strong);padding:6px;
+  }
+  .stamp-photo{
+    width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--paper-alt);
+  }
+  .stamp-photo img{
     width:100%;height:100%;object-fit:cover;
-    filter:grayscale(70%) contrast(1.05) brightness(0.96);
-    transition:filter .6s ease, transform .7s cubic-bezier(.22,1,.36,1);
+    filter:sepia(14%) contrast(1.02);
+    transition:filter .5s ease, transform .6s ease;
   }
-  .avatar-frame:hover .avatar-photo-large img{
-    filter:grayscale(0%) contrast(1) brightness(1);
-    transform:scale(1.05);
+  .stamp:hover .stamp-photo img{ filter:sepia(0%); transform:scale(1.04); }
+  /* postmark badge — a rotated ring with the sender's town, clipped over the corner */
+  .stamp-postmark{
+    position:absolute;top:-16px;right:-18px;width:76px;height:76px;
+    border-radius:50%;border:2px solid var(--rule);opacity:0.82;
+    display:flex;align-items:center;justify-content:center;
+    transform:rotate(-14deg);background:rgba(244,236,218,0.65);
   }
-  .avatar-corner{
-    position:absolute;width:20px;height:20px;
-    border:2px solid var(--accent);
-    transition:width .35s cubic-bezier(.22,1,.36,1), height .35s cubic-bezier(.22,1,.36,1), inset .35s ease;
+  .stamp-postmark::before{
+    content:"";position:absolute;inset:5px;border:1px solid var(--rule);border-radius:50%;
   }
-  .avatar-corner-tl{top:-9px;left:-9px;border-right:none;border-bottom:none;border-top-left-radius:4px;}
-  .avatar-corner-tr{top:-9px;right:-9px;border-left:none;border-bottom:none;border-top-right-radius:4px;}
-  .avatar-corner-bl{bottom:-9px;left:-9px;border-right:none;border-top:none;border-bottom-left-radius:4px;}
-  .avatar-corner-br{bottom:-9px;right:-9px;border-left:none;border-top:none;border-bottom-right-radius:4px;}
-  .avatar-frame:hover .avatar-corner{width:28px;height:28px;}
-  .avatar-tag{
-    position:absolute;bottom:10px;left:10px;z-index:2;
-    background:rgba(11,13,12,0.75);backdrop-filter:blur(4px);
-    color:var(--accent);font-size:0.68rem;letter-spacing:0.06em;
-    padding:4px 9px;border-radius:3px;border:1px solid var(--line);
-    opacity:0;transform:translateY(4px);
-    transition:opacity .3s ease, transform .3s ease;
+  .stamp-postmark-text{
+    font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.06em;
+    color:var(--rule);text-align:center;text-transform:uppercase;line-height:1.3;
   }
-  .avatar-frame:hover .avatar-tag{opacity:1;transform:translateY(0);}
+  .stamp-caption{
+    margin-top:12px;text-align:center;
+    font-family:'Fraunces',serif;font-style:italic;color:var(--ink-soft);font-size:0.92rem;
+  }
 
   /* About */
-  .about-grid{display:grid;grid-template-columns:1fr 1fr;gap:60px;align-items:start;}
-  .about-grid h2{font-size:2rem;font-weight:700;margin-bottom:22px;line-height:1.2;}
-  .about-grid p{color:var(--muted);margin-bottom:16px;line-height:1.75;}
+  .about-grid{display:grid;grid-template-columns:0.8fr 1.2fr;gap:60px;align-items:start;}
+  .about-grid h2{font-family:'Fraunces',serif;font-weight:600;font-size:2.1rem;margin-bottom:0;line-height:1.15;}
+  .about-grid p{color:var(--ink-soft);margin-bottom:16px;line-height:1.8;font-size:1.02rem;}
   .about-tag{
-    font-family:'JetBrains Mono',monospace;font-size:0.85rem;
-    color:var(--accent);border:1px solid var(--line);
-    display:inline-block;padding:10px 16px;border-radius:3px;margin-top:8px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.82rem;
+    color:var(--code);border:1px dashed var(--line-strong);
+    display:inline-block;padding:9px 14px;border-radius:3px;margin-top:6px;
   }
 
-  /* Education (styled like an experience timeline) */
+  /* Education — ruled ledger */
   .edu-item{
-    display:grid;grid-template-columns:160px 1fr;gap:30px;
-    padding:34px 0;border-top:1px solid var(--line);
+    display:grid;grid-template-columns:150px 1fr;gap:30px;
+    padding:30px 0;border-top:1px dashed var(--line-strong);
   }
-  .edu-item:last-child{border-bottom:none;}
-  .edu-period{font-family:'JetBrains Mono',monospace;font-size:0.85rem;color:var(--muted);}
-  .edu-item h3{font-size:1.3rem;font-weight:600;margin-bottom:6px;}
-  .edu-item .role{color:var(--accent);font-family:'JetBrains Mono',monospace;font-size:0.85rem;margin-bottom:10px;display:block;}
-  .edu-item p{color:var(--muted);line-height:1.7;}
+  .edu-item:last-child{border-bottom:1px dashed var(--line-strong);}
+  .edu-period{font-family:'IBM Plex Mono',monospace;font-size:0.85rem;color:var(--rule);}
+  .edu-item h3{font-family:'Fraunces',serif;font-weight:600;font-size:1.35rem;margin-bottom:6px;}
+  .edu-item .role{color:var(--code);font-family:'IBM Plex Mono',monospace;font-size:0.82rem;margin-bottom:10px;display:block;}
+  .edu-item p{color:var(--ink-soft);line-height:1.7;}
 
-  /* Skills / Stack */
-  .stack-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:14px;}
-  .stack-card{
-    border:1px solid var(--line);border-radius:6px;padding:22px 18px;
-    background:var(--bg-alt);transition:border-color .2s, transform .2s;
+  /* Skills — grouped like code tags vs. handwritten tags */
+  .skills-group{margin-bottom:44px;}
+  .skills-group:last-child{margin-bottom:0;}
+  .skills-group-label{
+    font-family:'IBM Plex Mono',monospace;font-size:0.78rem;color:var(--ink-soft);
+    letter-spacing:0.08em;margin-bottom:16px;text-transform:uppercase;
   }
-  .stack-card:hover{border-color:var(--accent);transform:translateY(-3px);}
-  .stack-card i{color:var(--accent);font-size:1.3rem;margin-bottom:12px;display:block;}
-  .stack-card span{font-family:'JetBrains Mono',monospace;font-size:0.85rem;}
+  .tag-grid{display:flex;flex-wrap:wrap;gap:12px;}
+  .tag-code{
+    font-family:'IBM Plex Mono',monospace;font-size:0.88rem;color:var(--code);
+    background:#fffdf8;border:1.5px solid var(--code);border-radius:4px;
+    padding:9px 14px;transition:transform .15s ease, background .15s ease;
+  }
+  .tag-code:hover{background:var(--code);color:#fffdf8;transform:translateY(-2px);}
+  .tag-soft{
+    font-family:'Fraunces',serif;font-style:italic;font-size:0.95rem;color:var(--ink);
+    background:var(--paper-alt);border:1px solid var(--line-strong);border-radius:20px;
+    padding:9px 18px;transition:transform .15s ease;
+  }
+  .tag-soft:hover{transform:translateY(-2px);}
 
-  /* Village Gallery */
-  .gallery-sub{color:var(--muted);max-width:520px;line-height:1.7;margin-bottom:34px;}
+  /* Village Gallery — scrapbook page */
+  .gallery-sub{color:var(--ink-soft);max-width:520px;line-height:1.75;margin-bottom:34px;}
   .gallery-grid{
-    display:grid;grid-template-columns:repeat(auto-fill,minmax(220px,1fr));
-    gap:16px;
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+    gap:28px 20px;
   }
   .gallery-item{
-    position:relative;border-radius:6px;overflow:hidden;
-    border:1px solid var(--line);
-    aspect-ratio:4/3;cursor:pointer;
-    background:var(--bg-alt);
+    position:relative;background:#fffdf8;padding:10px 10px 34px 10px;
+    box-shadow:0 8px 18px rgba(36,31,27,0.18);
+    cursor:pointer;transition:transform .3s ease, box-shadow .3s ease;
   }
+  .gallery-item:nth-child(odd){transform:rotate(-2deg);}
+  .gallery-item:nth-child(even){transform:rotate(2deg);}
+  .gallery-item:hover{transform:rotate(0deg) translateY(-4px);box-shadow:0 14px 26px rgba(36,31,27,0.26);}
+  .gallery-item .frame{aspect-ratio:4/3;overflow:hidden;background:var(--paper-alt);}
   .gallery-item img{
     width:100%;height:100%;object-fit:cover;display:block;
-    transition:transform .5s cubic-bezier(.22,1,.36,1), filter .4s ease;
-    filter:grayscale(15%);
+    filter:sepia(10%);transition:transform .5s ease, filter .4s ease;
   }
-  .gallery-item:hover img{transform:scale(1.08);filter:grayscale(0%);}
-  .gallery-item::after{
-    content:"";position:absolute;inset:0;
-    border:1px solid transparent;border-radius:6px;
-    transition:border-color .3s ease;
-    pointer-events:none;
-  }
-  .gallery-item:hover::after{border-color:var(--accent);}
+  .gallery-item:hover img{transform:scale(1.06);filter:sepia(0%);}
   .gallery-item .zoom-icon{
-    position:absolute;top:10px;right:10px;
-    width:30px;height:30px;border-radius:50%;
-    background:rgba(11,13,12,0.7);backdrop-filter:blur(4px);
-    display:flex;align-items:center;justify-content:center;
-    color:var(--accent);font-size:0.8rem;
-    opacity:0;transform:translateY(-6px);
-    transition:opacity .25s ease, transform .25s ease;
+    position:absolute;bottom:8px;right:10px;
+    color:var(--ink-soft);font-size:0.75rem;
+    font-family:'IBM Plex Mono',monospace;
+    opacity:0;transition:opacity .25s ease;
   }
-  .gallery-item:hover .zoom-icon{opacity:1;transform:translateY(0);}
+  .gallery-item:hover .zoom-icon{opacity:1;}
 
   /* Lightbox */
   .lightbox{
     position:fixed;inset:0;z-index:500;
-    background:rgba(6,7,6,0.94);
+    background:rgba(20,17,14,0.94);
     display:none;align-items:center;justify-content:center;
     padding:40px;opacity:0;transition:opacity .3s ease;
   }
   .lightbox.active{display:flex;opacity:1;}
   .lightbox img{
-    max-width:90vw;max-height:82vh;border-radius:6px;
-    border:1px solid var(--line);
+    max-width:90vw;max-height:82vh;border-radius:2px;
+    border:6px solid #fffdf8;
     transform:scale(0.96);transition:transform .3s cubic-bezier(.22,1,.36,1);
   }
   .lightbox.active img{transform:scale(1);}
   .lightbox-close{
     position:absolute;top:24px;right:28px;
     width:42px;height:42px;border-radius:50%;
-    border:1px solid var(--line);background:var(--bg-alt);
-    color:var(--text);font-size:1.1rem;cursor:pointer;
+    border:1.5px solid #fffdf8;background:transparent;
+    color:#fffdf8;font-size:1.1rem;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     transition:border-color .2s, color .2s;
   }
-  .lightbox-close:hover{border-color:var(--accent);color:var(--accent);}
+  .lightbox-close:hover{border-color:var(--rule);color:var(--rule);}
   .lightbox-nav{
     position:absolute;top:50%;transform:translateY(-50%);
     width:46px;height:46px;border-radius:50%;
-    border:1px solid var(--line);background:var(--bg-alt);
-    color:var(--text);font-size:1rem;cursor:pointer;
+    border:1.5px solid #fffdf8;background:transparent;
+    color:#fffdf8;font-size:1rem;cursor:pointer;
     display:flex;align-items:center;justify-content:center;
     transition:border-color .2s, color .2s;
   }
-  .lightbox-nav:hover{border-color:var(--accent);color:var(--accent);}
+  .lightbox-nav:hover{border-color:var(--rule);color:var(--rule);}
   .lightbox-prev{left:24px;}
   .lightbox-next{right:24px;}
   .lightbox-counter{
     position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
-    font-family:'JetBrains Mono',monospace;font-size:0.8rem;color:var(--muted);
+    font-family:'IBM Plex Mono',monospace;font-size:0.8rem;color:#EDE4CE;
   }
 
   /* Contact */
   .contact-inner{text-align:left;}
-  .contact-inner h2{font-size:clamp(2rem,5vw,3.2rem);font-weight:700;margin-bottom:20px;line-height:1.15;}
-  .contact-inner h2 span{color:var(--accent);}
+  .contact-inner h2{
+    font-family:'Fraunces',serif;font-weight:900;
+    font-size:clamp(2rem,5vw,3.2rem);margin-bottom:20px;line-height:1.12;
+  }
+  .contact-inner h2 em{color:var(--rule);font-style:italic;}
   .contact-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:28px;}
   .contact-links a{
-    font-family:'JetBrains Mono',monospace;font-size:0.9rem;
-    border:1px solid var(--line);border-radius:4px;
+    font-family:'IBM Plex Mono',monospace;font-size:0.9rem;
+    border:1.5px solid var(--ink);border-radius:4px;
     text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;
-    transition:border-color .2s, color .2s;
+    transition:transform .15s ease, box-shadow .15s ease;
     width:200px;height:52px;
-    flex:0 0 auto;
-    box-sizing:border-box;
+    flex:0 0 auto;box-sizing:border-box;
+    box-shadow:3px 3px 0 var(--ink);
   }
-  .contact-links a:hover{border-color:var(--accent);color:var(--accent);}
+  .contact-links a:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--rule);}
 
   @media (max-width:480px){
     .contact-links{flex-direction:column;}
@@ -344,28 +383,43 @@
   }
 
   footer{
-    padding:36px 0;text-align:center;
-    color:var(--muted);font-family:'JetBrains Mono',monospace;font-size:0.82rem;
+    padding:32px 0;text-align:center;
+    color:var(--ink-soft);font-family:'IBM Plex Mono',monospace;font-size:0.82rem;
   }
-  footer .accent{color:var(--accent);}
+  footer .accent{color:var(--rule);}
 
   @media (max-width:720px){
-    .about-grid{grid-template-columns:1fr;gap:26px;}
+    .container{padding-left:52px;}
+    .margin-rule{left:28px;}
+    .punch{left:14px;}
+    .about-grid{grid-template-columns:1fr;gap:20px;}
     .edu-item{grid-template-columns:1fr;gap:8px;}
     .hero-grid{grid-template-columns:1fr;gap:30px;}
     .hero-avatar-wrap{order:-1;}
-    .avatar-frame{width:150px;}
+    .stamp{width:160px;}
+    .stamp-postmark{width:60px;height:60px;top:-12px;right:-14px;}
+  }
+
+  @media (max-width:360px){
+    .hero{padding-top:120px;}
+    .stamp{width:140px;padding:12px;}
   }
 </style>
 </head>
 <body class="loading">
 
 <div class="preloader" id="preloader">
-  <div class="preloader-name" id="preloaderName">
+  <div class="curtain-bars" id="curtainBars">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+  <div class="curtain-letters" id="curtainLetters">
     <span>A</span><span>B</span><span>I</span><span>D</span>
   </div>
-  <div class="preloader-underline"></div>
+  <div class="curtain-caption" id="curtainCaption">Kushtia, Bangladesh</div>
 </div>
+
+<div class="margin-rule"></div>
 
 <div class="top-right-cluster" id="topRightCluster">
   <nav id="navPill">
@@ -389,24 +443,25 @@
   <div class="container">
     <div class="hero-grid">
       <div>
-        <div class="eyebrow mono">HSC STUDENT · KUSHTIA, BANGLADESH</div>
-        <h1>MD Shofiqul Islam<span>.</span></h1>
-        <p>Hi! I'm Abid — a Higher Secondary student in the Humanities group, building a steady foundation in learning, discipline, and reflection. "Alhamdulillah for everything."</p>
+        <div class="hero-eyebrow mono"><span class="prompt">$</span>cat status.txt — HSC Student, Kushtia, Bangladesh</div>
+        <h1>MD Shofiqul<br>Islam<em>.</em></h1>
+        <p>Hi, I'm Abid — a Higher Secondary student in the Humanities group who also builds websites and writes C++ on the side. Discipline in the classroom, curiosity in the editor. "Alhamdulillah for everything."</p>
         <div class="hero-cta">
           <a href="#contact" class="btn btn-fill">Get in touch</a>
-          <a href="#education" class="btn btn-line">View Education</a>
+          <a href="#skills" class="btn btn-line">View skills</a>
         </div>
       </div>
       <div class="hero-avatar-wrap">
-        <div class="avatar-frame">
-          <span class="avatar-corner avatar-corner-tl"></span>
-          <span class="avatar-corner avatar-corner-tr"></span>
-          <span class="avatar-corner avatar-corner-bl"></span>
-          <span class="avatar-corner avatar-corner-br"></span>
-          <div class="avatar-photo-large">
-            <img src="images/profile.jpg" alt="Shofiqul Islam profile picture">
+        <div class="stamp">
+          <div class="stamp-postmark">
+            <span class="stamp-postmark-text">Kushtia<br>BD</span>
           </div>
-          <span class="avatar-tag mono">SHOFIQUL</span>
+          <div class="stamp-inner">
+            <div class="stamp-photo">
+              <img src="images/profile.jpg" alt="Shofiqul Islam profile picture">
+            </div>
+          </div>
+          <span class="stamp-caption">— Shofiqul</span>
         </div>
       </div>
     </div>
@@ -416,23 +471,23 @@
 <section id="about">
   <div class="container about-grid">
     <div>
-      <div class="eyebrow mono">ABOUT ME</div>
+      <span class="margin-note">01 · ABOUT</span>
       <h2>This is me.</h2>
     </div>
     <div>
-      <p>I'm Shofiqul, currently pursuing my Higher Secondary Certificate at Jhaudia College in Kushtia, Bangladesh. My focus is the Humanities — language, society, and ideas — and I try to bring the same discipline to my studies that I bring to everything else.</p>
-      <p>I believe in steady, consistent effort over shortcuts, and in staying grounded while I grow — academically and personally.</p>
-      <span class="about-tag mono">grateful for every lesson learned</span>
+      <p>I'm Shofiqul, currently pursuing my Higher Secondary Certificate at Jhaudia College in Kushtia, Bangladesh. My focus is the Humanities — language, society, and ideas — but I spend just as much time in a code editor, teaching myself web design and C++.</p>
+      <p>I believe in steady, consistent effort over shortcuts, and in staying grounded while I grow — academically, technically, and personally.</p>
+      <span class="about-tag">grateful for every lesson learned</span>
     </div>
   </div>
 </section>
 
 <section id="education">
   <div class="container">
-    <div class="eyebrow mono">EDUCATION</div>
-    <h2 style="font-size:2rem;font-weight:700;margin-bottom:8px;">My Background</h2>
+    <span class="margin-note">02 · EDUCATION</span>
+    <h2 class="display" style="font-size:2.1rem;font-weight:600;margin-bottom:8px;">My Background</h2>
     <div class="edu-item">
-      <div class="edu-period">2024 — Present</div>
+      <div class="edu-period mono">2024 — Present</div>
       <div>
         <h3>Jhaudia College</h3>
         <span class="role">Higher Secondary Certificate (HSC) · Humanities Group</span>
@@ -440,7 +495,7 @@
       </div>
     </div>
     <div class="edu-item">
-      <div class="edu-period">Completed 2024</div>
+      <div class="edu-period mono">Completed 2024</div>
       <div>
         <h3>Jhaudia Bazar Secondary High School</h3>
         <span class="role">Secondary School Certificate (SSC) · Humanities Group</span>
@@ -452,24 +507,36 @@
 
 <section id="skills">
   <div class="container">
-    <div class="eyebrow mono">MY STACK</div>
-    <h2 style="font-size:2rem;font-weight:700;margin-bottom:30px;">Skills</h2>
-    <div class="stack-grid">
-      <div class="stack-card"><i class="fas fa-comments"></i><span>Communication</span></div>
-      <div class="stack-card"><i class="fas fa-clock"></i><span>Time Management</span></div>
-      <div class="stack-card"><i class="fas fa-laptop"></i><span>Computer Literacy</span></div>
-      <div class="stack-card"><i class="fas fa-language"></i><span>Bengali (Native)</span></div>
-      <div class="stack-card"><i class="fas fa-globe"></i><span>English (Working)</span></div>
-      <div class="stack-card"><i class="fas fa-book"></i><span>Arabic (Reading)</span></div>
-      <div class="stack-card"><i class="fas fa-users"></i><span>Teamwork</span></div>
+    <span class="margin-note">03 · SKILLS</span>
+    <h2 class="display" style="font-size:2.1rem;font-weight:600;margin-bottom:34px;">What I Work With</h2>
+
+    <div class="skills-group">
+      <div class="skills-group-label">// technical</div>
+      <div class="tag-grid">
+        <span class="tag-code">&lt;Website Design/&gt;</span>
+        <span class="tag-code">C++ Programming</span>
+        <span class="tag-code">Computer Literacy</span>
+      </div>
+    </div>
+
+    <div class="skills-group">
+      <div class="skills-group-label">— languages &amp; people</div>
+      <div class="tag-grid">
+        <span class="tag-soft">Bengali (Native)</span>
+        <span class="tag-soft">English (Working)</span>
+        <span class="tag-soft">Arabic (Reading)</span>
+        <span class="tag-soft">Communication</span>
+        <span class="tag-soft">Time Management</span>
+        <span class="tag-soft">Teamwork</span>
+      </div>
     </div>
   </div>
 </section>
 
 <section id="village">
   <div class="container">
-    <div class="eyebrow mono">MY VILLAGE</div>
-    <h2 style="font-size:2rem;font-weight:700;margin-bottom:14px;">Jhaudia, Kushtia</h2>
+    <span class="margin-note">04 · MY VILLAGE</span>
+    <h2 class="display" style="font-size:2.1rem;font-weight:600;margin-bottom:14px;">Jhaudia, Kushtia</h2>
     <p class="gallery-sub">A few glimpses of home — the fields, the roads, the everyday moments of my village. Click any photo to view it larger.</p>
     <p class="gallery-sub mono" id="galleryStatus" style="font-size:0.8rem;">Loading photos…</p>
     <div class="gallery-grid" id="galleryGrid"></div>
@@ -486,8 +553,8 @@
 
 <section id="contact" style="border-bottom:none;">
   <div class="container contact-inner">
-    <div class="eyebrow mono">GET IN TOUCH</div>
-    <h2>You know how <span>to find me.</span></h2>
+    <span class="margin-note">05 · CONTACT</span>
+    <h2>You know how <em>to find me.</em></h2>
     <div class="contact-links">
       <a href="mailto:shofiqulislamabid@gmail.com?subject=Start%20user%20text&body=I%20am%20%5Byour%20name%5D%0A%0A"><i class="fas fa-envelope"></i> Email</a>
       <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-messenger"></i> Messenger</a>
@@ -496,24 +563,33 @@
 </section>
 
 <footer>
-  built by <span class="accent">Abid</span> · &copy; 2026
+  <span class="mono">$</span> built by <span class="accent">Abid</span> · &copy; 2026
 </footer>
 
 <script>
-  // Intro preloader: letters flip in, underline draws, then everything slides up and out
+  // Curtain-reveal preloader: letters fade in over the bars, then the bars
+  // descend away (staggered) to uncover the page underneath.
   const preloader = document.getElementById('preloader');
-  const preloaderName = document.getElementById('preloaderName');
+  const curtainBars = document.getElementById('curtainBars');
+  const curtainLetters = document.getElementById('curtainLetters');
+  const curtainCaption = document.getElementById('curtainCaption');
   document.body.classList.add('loading');
 
+  // stagger each bar's exit slightly so the curtain falls left-to-right
+  Array.from(curtainBars.children).forEach((bar, i) => {
+    bar.style.transitionDelay = (i * 0.06) + 's';
+  });
+
   setTimeout(() => {
-    preloader.classList.add('exiting');
-    preloaderName.classList.add('exit');
-  }, 1300);
-  setTimeout(() => preloader.classList.add('hide'), 1750);
+    curtainLetters.classList.add('exit');
+    curtainCaption.classList.add('exit');
+    curtainBars.classList.add('exit');
+  }, 1150);
+
   setTimeout(() => {
     preloader.remove();
     document.body.classList.remove('loading');
-  }, 2400);
+  }, 2150);
 
   // Mobile 3-dot menu
   const menuBtn = document.getElementById('menuBtn');
@@ -534,7 +610,7 @@
   mobileOverlay.addEventListener('click', closeMenu);
   mobileMenu.querySelectorAll('a').forEach(a => a.addEventListener('click', closeMenu));
 
-  // Top-right cluster (avatar + nav pill): hide on scroll down, show on scroll up
+  // Top-right cluster: hide on scroll down, show on scroll up
   const topRightCluster = document.getElementById('topRightCluster');
   let lastScroll = 0;
   window.addEventListener('scroll', () => {
@@ -548,11 +624,38 @@
     lastScroll = current;
   });
 
+  // Margin punch holes (decorative, spaced down the rule line).
+  // Recomputed after load, after the gallery populates, and on resize —
+  // running it only once at parse time (as before) undercounted holes on
+  // taller/rebuilt pages and left them stale after a resize or rotation.
+  let existingPunches = [];
+  function addPunches(){
+    existingPunches.forEach(p => p.remove());
+    existingPunches = [];
+    const count = Math.ceil(document.body.scrollHeight / 140);
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const p = document.createElement('div');
+      p.className = 'punch';
+      p.style.top = (70 + i*140) + 'px';
+      existingPunches.push(p);
+      frag.appendChild(p);
+    }
+    document.body.appendChild(frag);
+  }
+  addPunches();
+  window.addEventListener('load', addPunches);
+  let punchResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(punchResizeTimer);
+    punchResizeTimer = setTimeout(addPunches, 200);
+  });
+
   // Village gallery: auto-discover every picture-NN.ext file inside village-picture/
   const VILLAGE_FOLDER = 'village-picture';
   const VILLAGE_EXTENSIONS = ['jpg','jpeg','png','webp','JPG','JPEG','PNG','WEBP'];
-  const VILLAGE_MAX_CHECK = 300;      // stop scanning after this many numbers no matter what
-  const VILLAGE_MAX_GAP = 3;          // allow a few skipped numbers (e.g. picture-01, picture-03) before giving up
+  const VILLAGE_MAX_CHECK = 300;
+  const VILLAGE_MAX_GAP = 3;
 
   function checkImageExists(url){
     return new Promise((resolve) => {
@@ -640,14 +743,16 @@
     galleryStatus.remove();
     galleryGrid.innerHTML = urls.map((url, i) => `
       <div class="gallery-item" data-index="${i}">
-        <img src="${url}" alt="My village photo ${i + 1}" loading="lazy">
-        <span class="zoom-icon"><i class="fas fa-expand"></i></span>
+        <div class="frame"><img src="${url}" alt="My village photo ${i + 1}" loading="lazy"></div>
+        <span class="zoom-icon"><i class="fas fa-expand"></i> view</span>
       </div>
     `).join('');
 
     galleryGrid.querySelectorAll('.gallery-item').forEach((item) => {
       item.addEventListener('click', () => openLightbox(Number(item.dataset.index)));
     });
+
+    addPunches();
   })();
 </script>
 
