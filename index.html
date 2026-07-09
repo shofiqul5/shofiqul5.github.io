@@ -196,54 +196,39 @@
   .btn-fill:hover{box-shadow:5px 5px 0 var(--rule);}
   .btn-line:hover{box-shadow:5px 5px 0 var(--ink);}
 
-  /* Avatar — postage stamp, torn from a sheet, postmarked from Kushtia */
-  .hero-avatar-wrap{display:flex;justify-content:center;align-items:center;}
-  .stamp{
-    position:relative;width:min(230px,78%);
-    padding:16px;background:#fffdf8;
-    box-shadow:0 10px 26px rgba(36,31,27,0.22);
-    transform:rotate(-4deg);
+  /* Avatar — a photo note pinned up, corner lifting slightly off the page */
+  .hero-avatar-wrap{display:flex;justify-content:center;align-items:center;padding-top:18px;}
+  .pin-note{
+    position:relative;width:min(220px,76%);
+    background:#fffaf1;
+    padding:14px 14px 40px 14px;
+    border-radius:10px;
+    box-shadow:0 16px 26px rgba(36,31,27,0.24), 0 4px 8px rgba(36,31,27,0.14);
+    transform:rotate(-3deg);
     transition:transform .4s cubic-bezier(.22,1,.36,1);
   }
-  .stamp:hover{transform:rotate(0deg) scale(1.02);}
-  /* perforated edge: four radial-gradient rows cut circular notches into each side */
-  .stamp::before{
-    content:"";position:absolute;inset:0;pointer-events:none;
-    background:
-      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) top left / 18px 18px repeat-x,
-      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) bottom left / 18px 18px repeat-x,
-      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) top left / 18px 18px repeat-y,
-      radial-gradient(circle at 9px 9px, transparent 7px, var(--paper) 7.3px) top right / 18px 18px repeat-y;
-  }
-  .stamp-inner{
-    position:relative;border:1.5px dashed var(--line-strong);padding:6px;
-  }
-  .stamp-photo{
+  .pin-note:hover{transform:rotate(-1deg) translateY(-3px);}
+  .pin-note-photo{
     width:100%;aspect-ratio:1/1;overflow:hidden;background:var(--paper-alt);
+    position:relative;border-radius:5px;
   }
-  .stamp-photo img{
+  .pin-note-photo img{
     width:100%;height:100%;object-fit:cover;
-    filter:sepia(14%) contrast(1.02);
+    filter:sepia(10%) contrast(1.02);
     transition:filter .5s ease, transform .6s ease;
   }
-  .stamp:hover .stamp-photo img{ filter:sepia(0%); transform:scale(1.04); }
-  /* postmark badge — a rotated ring with the sender's town, clipped over the corner */
-  .stamp-postmark{
-    position:absolute;top:-16px;right:-18px;width:76px;height:76px;
-    border-radius:50%;border:2px solid var(--rule);opacity:0.82;
-    display:flex;align-items:center;justify-content:center;
-    transform:rotate(-14deg);background:rgba(244,236,218,0.65);
+  .pin-note:hover .pin-note-photo img{ filter:sepia(0%); transform:scale(1.04); }
+  .pin-note-caption{
+    position:absolute;bottom:12px;left:0;right:0;text-align:center;
+    font-family:'Fraunces',serif;font-style:italic;color:var(--ink-soft);font-size:0.95rem;
   }
-  .stamp-postmark::before{
-    content:"";position:absolute;inset:5px;border:1px solid var(--rule);border-radius:50%;
-  }
-  .stamp-postmark-text{
-    font-family:'IBM Plex Mono',monospace;font-size:0.5rem;letter-spacing:0.06em;
-    color:var(--rule);text-align:center;text-transform:uppercase;line-height:1.3;
-  }
-  .stamp-caption{
-    margin-top:12px;text-align:center;
-    font-family:'Fraunces',serif;font-style:italic;color:var(--ink-soft);font-size:0.92rem;
+  /* corner lift — a small triangular fold showing the paper's underside, casting a shadow inward */
+  .pin-note-curl{
+    position:absolute;right:3px;bottom:3px;width:34px;height:34px;
+    background:linear-gradient(225deg, #fffaf1 48%, #e6dabd 50%, #cdbd97 100%);
+    clip-path:polygon(100% 100%, 0 100%, 100% 0);
+    border-bottom-right-radius:8px;
+    box-shadow:-5px -5px 10px rgba(36,31,27,0.22);
   }
 
   /* About */
@@ -396,13 +381,12 @@
     .edu-item{grid-template-columns:1fr;gap:8px;}
     .hero-grid{grid-template-columns:1fr;gap:30px;}
     .hero-avatar-wrap{order:-1;}
-    .stamp{width:160px;}
-    .stamp-postmark{width:60px;height:60px;top:-12px;right:-14px;}
+    .pin-note{width:170px;}
   }
 
   @media (max-width:360px){
     .hero{padding-top:120px;}
-    .stamp{width:140px;padding:12px;}
+    .pin-note{width:145px;padding:10px 10px 32px 10px;}
   }
 </style>
 </head>
@@ -452,16 +436,12 @@
         </div>
       </div>
       <div class="hero-avatar-wrap">
-        <div class="stamp">
-          <div class="stamp-postmark">
-            <span class="stamp-postmark-text">Kushtia<br>BD</span>
+        <div class="pin-note">
+          <div class="pin-note-photo">
+            <img src="images/profile.jpg" alt="Shofiqul Islam profile picture">
           </div>
-          <div class="stamp-inner">
-            <div class="stamp-photo">
-              <img src="images/profile.jpg" alt="Shofiqul Islam profile picture">
-            </div>
-          </div>
-          <span class="stamp-caption">— Shofiqul</span>
+          <span class="pin-note-caption">— Shofiqul</span>
+          <span class="pin-note-curl"></span>
         </div>
       </div>
     </div>
