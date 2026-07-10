@@ -140,7 +140,7 @@
   }
   .mobile-menu.active .mobile-menu-profile{opacity:1;transform:translateX(0);transition-delay:.02s;}
   .mobile-menu-avatar{
-    width:46px;height:46px;border-radius:50%;overflow:hidden;flex:0 0 auto;
+    width:46px;height:46px;border-radius:12px;overflow:hidden;flex:0 0 auto;
     border:2px solid var(--rule);box-shadow:0 3px 6px rgba(36,31,27,0.2);
   }
   .mobile-menu-avatar img{
@@ -211,7 +211,7 @@
     max-width:960px;margin:0 auto;padding:0 28px 36px 64px;position:relative;
   }
   .profile-pic{
-    margin-top:-58px;width:126px;height:126px;border-radius:50%;overflow:hidden;
+    margin-top:-58px;width:126px;height:126px;border-radius:20px;overflow:hidden;
     border:5px solid var(--paper);box-shadow:0 6px 16px rgba(36,31,27,0.28);
     background:var(--paper-alt);position:relative;z-index:2;
   }
@@ -225,13 +225,22 @@
     margin-top:6px;
   }
   .profile-message-btn{
-    margin-top:16px;display:inline-flex;align-items:center;gap:8px;
+    display:inline-flex;align-items:center;gap:8px;
     background:var(--ink);color:var(--paper);text-decoration:none;
     font-family:'IBM Plex Mono',monospace;font-size:0.85rem;
     padding:11px 22px;border-radius:6px;border:1.5px solid var(--ink);
     box-shadow:3px 3px 0 var(--rule);transition:transform .15s ease, box-shadow .15s ease;
   }
   .profile-message-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--rule);}
+  .profile-btn-row{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;}
+  .profile-email-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:transparent;color:var(--ink);text-decoration:none;
+    font-family:'IBM Plex Mono',monospace;font-size:0.85rem;
+    padding:11px 22px;border-radius:6px;border:1.5px solid var(--ink);
+    box-shadow:3px 3px 0 var(--code);transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .profile-email-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--code);}
 
   /* Contact rows — reused inside the contact post's body */
   .intro-row{
@@ -244,22 +253,54 @@
   .intro-row a:hover{text-decoration:underline;}
 
   /* Feed — each block of text becomes its own post card, share-only (no reactions) */
-  .feed{max-width:640px;margin:0 auto;padding:44px 20px 10px 20px;}
-  .feed-group{margin-bottom:6px;}
+  .feed{max-width:640px;margin:0 auto;padding:44px 20px 10px 20px;position:relative;}
+
+  /* Stitched thread running down the center of the feed, linking every
+     post like they're sewn together in a scrapbook. */
+  .feed::before{
+    content:"";position:absolute;top:26px;bottom:26px;left:50%;
+    width:0;border-left:2px dashed var(--line-strong);
+    transform:translateX(-50%);z-index:0;
+  }
+  .feed-group{margin-bottom:6px;position:relative;z-index:1;}
   .post{
-    position:relative;overflow:hidden;
+    position:relative;overflow:visible;
     background:var(--bg,#fffdf8);border:1px solid var(--line-strong);border-radius:10px;
-    padding:22px;margin-bottom:22px;box-shadow:0 4px 14px rgba(36,31,27,0.08);
+    padding:22px;margin-bottom:38px;box-shadow:0 4px 14px rgba(36,31,27,0.08);
     transition:transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s ease;
     --accent: linear-gradient(90deg, var(--rule), var(--code));
+    --tilt: -0.6deg;
   }
+  .post:nth-child(even){--tilt:0.6deg;}
+  .post{transform:rotate(var(--tilt));}
+  .post:hover{transform:rotate(0deg) translateY(-3px);box-shadow:0 10px 24px rgba(36,31,27,0.16);}
+
+  /* Grommets: little eyelets top/bottom-center of each card where the
+     "thread" appears to pass through. */
+  .post::after{
+    content:"";position:absolute;left:50%;bottom:-38px;transform:translateX(-50%);
+    width:11px;height:11px;border-radius:50%;
+    background:var(--paper);border:2px solid var(--line-strong);z-index:2;
+  }
+  .feed-group:last-child .post:last-child::after{display:none;}
   .post::before{
-    content:"";position:absolute;top:0;left:0;right:0;height:3px;
+    content:"";position:absolute;top:0;left:0;right:0;height:3px;border-radius:10px 10px 0 0;
     background:var(--accent);
   }
-  .post:hover{transform:translateY(-3px);box-shadow:0 10px 24px rgba(36,31,27,0.16);}
+
+  /* Washi-tape corner accent — alternates side/rotation per post so no two
+     cards look quite the same. */
+  .post .post-tape{
+    position:absolute;top:-12px;width:52px;height:22px;
+    background:var(--accent);opacity:0.55;
+    box-shadow:0 2px 4px rgba(36,31,27,0.18);
+    z-index:3;
+  }
+  .post:nth-child(3n){ }
+  .post .post-tape.tape-left{left:18px;transform:rotate(-8deg);}
+  .post .post-tape.tape-right{right:18px;transform:rotate(8deg);}
   .post-header{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
-  .post-avatar{width:40px;height:40px;border-radius:50%;overflow:hidden;flex:0 0 auto;border:2px solid var(--rule);box-shadow:0 2px 5px rgba(36,31,27,0.18);}
+  .post-avatar{width:40px;height:40px;border-radius:11px;overflow:hidden;flex:0 0 auto;border:2px solid var(--accent, var(--rule));box-shadow:0 2px 5px rgba(36,31,27,0.18);}
   .post-avatar img{width:100%;height:100%;object-fit:cover;filter:sepia(8%);}
   .post-name{font-family:'Fraunces',serif;font-weight:600;font-size:0.95rem;color:var(--ink);display:block;}
   .post-sub{font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink-soft);}
@@ -282,6 +323,57 @@
   .post-share:hover{background:var(--paper-alt);color:var(--rule);border-color:var(--rule);transform:translateY(-1px);}
   .post-share:active{transform:translateY(0);}
   .post-share.copied{color:var(--code);border-color:var(--code);}
+
+  /* Share sheet — bottom-sheet modal (YouTube-style) opened by the Share button */
+  .share-sheet{
+    position:fixed;inset:0;z-index:700;
+    background:rgba(20,17,14,0.5);
+    display:none;align-items:flex-end;justify-content:center;
+    opacity:0;transition:opacity .25s ease;
+  }
+  .share-sheet.active{display:flex;opacity:1;}
+  .share-sheet-panel{
+    width:100%;max-width:520px;background:var(--paper);
+    border:1.5px solid var(--ink);border-bottom:none;
+    border-radius:18px 18px 0 0;padding:14px 22px 26px 22px;
+    box-shadow:0 -8px 24px rgba(36,31,27,0.3);
+    transform:translateY(100%);transition:transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .share-sheet.active .share-sheet-panel{transform:translateY(0);}
+  .share-sheet-handle{
+    width:40px;height:5px;border-radius:3px;background:var(--line-strong);
+    margin:0 auto 14px auto;
+  }
+  .share-sheet-title{
+    font-family:'Fraunces',serif;font-weight:600;font-size:1rem;
+    margin-bottom:18px;text-align:center;
+  }
+  .share-options{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px 8px;
+    margin-bottom:20px;
+  }
+  .share-option{
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    background:none;border:none;cursor:pointer;
+    font-family:'IBM Plex Mono',monospace;font-size:0.72rem;color:var(--ink);
+  }
+  .share-icon{
+    width:50px;height:50px;border-radius:14px;display:flex;align-items:center;justify-content:center;
+    font-size:1.2rem;color:#fff;transition:transform .15s ease;
+  }
+  .share-option:hover .share-icon{transform:translateY(-2px);}
+  .share-icon.fb{background:#3b5998;}
+  .share-icon.msgr{background:#0084ff;}
+  .share-icon.wa{background:#25d366;}
+  .share-icon.x{background:#000;}
+  .share-icon.mail{background:var(--code);}
+  .share-icon.copy{background:var(--ink-soft);}
+  .share-sheet-cancel{
+    width:100%;padding:12px;border-radius:8px;border:1.5px solid var(--ink);
+    background:transparent;font-family:'IBM Plex Mono',monospace;font-size:0.88rem;
+    cursor:pointer;transition:background .2s ease;
+  }
+  .share-sheet-cancel:hover{background:var(--paper-alt);}
 
   /* Toast — small confirmation when a share link is copied */
   .toast{
@@ -452,9 +544,14 @@
     </div>
     <h1 class="profile-name">MD Shofiqul Islam</h1>
     <div class="profile-tagline mono">HSC Student · Humanities · Kushtia, Bangladesh</div>
-    <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer" class="profile-message-btn">
-      <i class="fab fa-facebook-messenger"></i> Message
-    </a>
+    <div class="profile-btn-row">
+      <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer" class="profile-message-btn">
+        <i class="fab fa-facebook-messenger"></i> Message
+      </a>
+      <a href="mailto:shofiqulislamabid@gmail.com" class="profile-email-btn">
+        <i class="fas fa-envelope"></i> Email
+      </a>
+    </div>
   </div>
 </div>
 
@@ -462,6 +559,7 @@
 
   <div id="about" class="feed-group">
     <article class="post" id="post-about" style="--bg:#F3E7CF;--accent:#C9A87C;">
+      <span class="post-tape tape-left"></span>
       <div class="post-header">
         <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
         <div>
@@ -481,6 +579,7 @@
 
   <div id="education" class="feed-group">
     <article class="post" id="post-edu-hsc" style="--bg:#E3ECE0;--accent:#8FA98F;">
+      <span class="post-tape tape-right"></span>
       <div class="post-header">
         <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
         <div>
@@ -499,6 +598,7 @@
     </article>
 
     <article class="post" id="post-edu-ssc" style="--bg:#F0E1E7;--accent:#A98F9E;">
+      <span class="post-tape tape-left"></span>
       <div class="post-header">
         <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
         <div>
@@ -519,6 +619,7 @@
 
   <div id="skills" class="feed-group">
     <article class="post" id="post-skill-tech" style="--bg:#E1EAF0;--accent:#7C9AA9;">
+      <span class="post-tape tape-left"></span>
       <div class="post-header">
         <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
         <div>
@@ -542,6 +643,7 @@
     </article>
 
     <article class="post" id="post-skill-soft" style="--bg:#F1EAD2;--accent:#B9A97C;">
+      <span class="post-tape tape-right"></span>
       <div class="post-header">
         <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
         <div>
@@ -568,9 +670,31 @@
     </article>
   </div>
 
-  <div id="village" class="feed-group" style="max-width:640px;margin:0 auto;">
+  <div id="village" class="feed-group">
     <p class="mono" id="galleryStatus" style="font-size:0.8rem;color:var(--ink-soft);padding:0 20px 16px 20px;">Loading photos…</p>
     <div id="villagePosts"></div>
+  </div>
+
+  <div id="contact" class="feed-group">
+    <article class="post" id="post-contact" style="--bg:#DCEEE8;--accent:#7CA997;">
+      <span class="post-tape tape-left"></span>
+      <div class="post-header">
+        <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
+        <div>
+          <span class="post-name">Shofiqul Islam</span>
+          <span class="post-sub">Contact info</span>
+        </div>
+      </div>
+      <div class="post-body">
+        <div class="intro-row"><i class="fas fa-graduation-cap"></i> Studies Humanities at Jhaudia College</div>
+        <div class="intro-row"><i class="fas fa-location-dot"></i> Lives in Kushtia, Bangladesh</div>
+        <div class="intro-row"><i class="fas fa-envelope"></i> <a href="mailto:shofiqulislamabid@gmail.com?subject=Start%20user%20text&body=I%20am%20%5Byour%20name%5D%0A%0A">shofiqulislamabid@gmail.com</a></div>
+        <div class="intro-row"><i class="fab fa-facebook-messenger"></i> <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer">Message on Messenger</a></div>
+      </div>
+      <div class="post-footer">
+        <button class="post-share" data-target="post-contact"><i class="fas fa-share"></i> Share</button>
+      </div>
+    </article>
   </div>
 
 </div>
@@ -583,25 +707,20 @@
   <div class="lightbox-counter" id="lightboxCounter"></div>
 </div>
 
-<div id="contact" class="feed-group" style="max-width:640px;margin:0 auto;padding:0 20px 50px 20px;">
-  <article class="post" id="post-contact" style="--bg:#DCEEE8;--accent:#7CA997;">
-    <div class="post-header">
-      <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
-      <div>
-        <span class="post-name">Shofiqul Islam</span>
-        <span class="post-sub">Contact info</span>
-      </div>
+<div class="share-sheet" id="shareSheet">
+  <div class="share-sheet-panel">
+    <div class="share-sheet-handle"></div>
+    <h4 class="share-sheet-title">Share this post</h4>
+    <div class="share-options">
+      <button class="share-option" data-network="facebook"><span class="share-icon fb"><i class="fab fa-facebook-f"></i></span><span>Facebook</span></button>
+      <button class="share-option" data-network="messenger"><span class="share-icon msgr"><i class="fab fa-facebook-messenger"></i></span><span>Messenger</span></button>
+      <button class="share-option" data-network="whatsapp"><span class="share-icon wa"><i class="fab fa-whatsapp"></i></span><span>WhatsApp</span></button>
+      <button class="share-option" data-network="twitter"><span class="share-icon x"><i class="fab fa-x-twitter"></i></span><span>X</span></button>
+      <button class="share-option" data-network="email"><span class="share-icon mail"><i class="fas fa-envelope"></i></span><span>Email</span></button>
+      <button class="share-option" data-network="copy"><span class="share-icon copy"><i class="fas fa-link"></i></span><span>Copy link</span></button>
     </div>
-    <div class="post-body">
-      <div class="intro-row"><i class="fas fa-graduation-cap"></i> Studies Humanities at Jhaudia College</div>
-      <div class="intro-row"><i class="fas fa-location-dot"></i> Lives in Kushtia, Bangladesh</div>
-      <div class="intro-row"><i class="fas fa-envelope"></i> <a href="mailto:shofiqulislamabid@gmail.com?subject=Start%20user%20text&body=I%20am%20%5Byour%20name%5D%0A%0A">shofiqulislamabid@gmail.com</a></div>
-      <div class="intro-row"><i class="fab fa-facebook-messenger"></i> <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer">Message on Messenger</a></div>
-    </div>
-    <div class="post-footer">
-      <button class="post-share" data-target="post-contact"><i class="fas fa-share"></i> Share</button>
-    </div>
-  </article>
+    <button class="share-sheet-cancel" id="shareSheetCancel">Cancel</button>
+  </div>
 </div>
 
 <footer>
@@ -827,24 +946,79 @@
   // Each photo in village-picture/ becomes its own separate post card,
   // styled like the rest of the feed, so no manual link-wiring is needed —
   // add a photo to the folder and it shows up as a new post automatically.
-  function bindShareButton(btn){
-    btn.addEventListener('click', async () => {
-      const targetId = btn.dataset.target;
-      const url = `${location.origin}${location.pathname}#${targetId}`;
-      try {
-        await navigator.clipboard.writeText(url);
-      } catch (err) {
-        const temp = document.createElement('input');
-        temp.value = url;
-        document.body.appendChild(temp);
-        temp.select();
-        document.execCommand('copy');
-        temp.remove();
+
+  // Share sheet: clicking Share on any post opens a bottom-sheet modal
+  // (like YouTube's mobile share dialog) with network options, instead
+  // of copying the link straight away.
+  const shareSheet = document.getElementById('shareSheet');
+  const shareSheetCancel = document.getElementById('shareSheetCancel');
+  let activeShareBtn = null;
+  let activeShareUrl = '';
+
+  function openShareSheet(btn){
+    activeShareBtn = btn;
+    activeShareUrl = `${location.origin}${location.pathname}#${btn.dataset.target}`;
+    shareSheet.classList.add('active');
+  }
+  function closeShareSheet(){
+    shareSheet.classList.remove('active');
+    activeShareBtn = null;
+  }
+  shareSheetCancel.addEventListener('click', closeShareSheet);
+  shareSheet.addEventListener('click', (e) => { if(e.target === shareSheet) closeShareSheet(); });
+  document.addEventListener('keydown', (e) => {
+    if(e.key === 'Escape' && shareSheet.classList.contains('active')) closeShareSheet();
+  });
+
+  async function copyShareLink(url){
+    try {
+      await navigator.clipboard.writeText(url);
+    } catch (err) {
+      const temp = document.createElement('input');
+      temp.value = url;
+      document.body.appendChild(temp);
+      temp.select();
+      document.execCommand('copy');
+      temp.remove();
+    }
+  }
+
+  document.querySelectorAll('.share-option').forEach((opt) => {
+    opt.addEventListener('click', async () => {
+      const network = opt.dataset.network;
+      const url = activeShareUrl;
+      const encoded = encodeURIComponent(url);
+      switch(network){
+        case 'facebook':
+          window.open(`https://www.facebook.com/sharer/sharer.php?u=${encoded}`, '_blank', 'noopener,noreferrer');
+          break;
+        case 'messenger':
+          window.open(`https://m.me/61591489238233`, '_blank', 'noopener,noreferrer');
+          break;
+        case 'whatsapp':
+          window.open(`https://wa.me/?text=${encoded}`, '_blank', 'noopener,noreferrer');
+          break;
+        case 'twitter':
+          window.open(`https://twitter.com/intent/tweet?url=${encoded}`, '_blank', 'noopener,noreferrer');
+          break;
+        case 'email':
+          window.location.href = `mailto:?subject=${encodeURIComponent('Check this out')}&body=${encoded}`;
+          break;
+        case 'copy':
+          await copyShareLink(url);
+          if (activeShareBtn){
+            activeShareBtn.classList.add('copied');
+            setTimeout(() => activeShareBtn.classList.remove('copied'), 1200);
+          }
+          showToast('Link copied to clipboard');
+          break;
       }
-      showToast('Link copied to clipboard');
-      btn.classList.add('copied');
-      setTimeout(() => btn.classList.remove('copied'), 1200);
+      closeShareSheet();
     });
+  });
+
+  function bindShareButton(btn){
+    btn.addEventListener('click', () => openShareSheet(btn));
   }
 
   (async function initVillageGallery(){
@@ -868,7 +1042,9 @@
       article.id = `post-village-${i + 1}`;
       article.style.setProperty('--bg', bg);
       article.style.setProperty('--accent', accent);
+      const tapeSide = i % 2 === 0 ? 'tape-left' : 'tape-right';
       article.innerHTML = `
+        <span class="post-tape ${tapeSide}"></span>
         <div class="post-header">
           <span class="post-avatar"><img src="images/profile.jpg" alt="Shofiqul"></span>
           <div>
