@@ -8,6 +8,8 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preload" as="image" href="images/profile.jpg">
+<link rel="preload" as="image" href="cover.jpg">
 <style>
   :root{
     --paper:#F4ECDA;
@@ -445,13 +447,13 @@
   </div>
   <div class="profile-header-body">
     <div class="profile-pic">
-      <img src="images/profile.jpg" alt="Shofiqul Islam profile picture">
+      <img src="images/profile.jpg" alt="Shofiqul Islam profile picture" fetchpriority="high" decoding="async">
     </div>
     <h1 class="profile-name">MD Shofiqul Islam</h1>
     <div class="profile-tagline mono">HSC Student · Humanities · Kushtia, Bangladesh</div>
     <div class="profile-btn-row">
-      <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer" class="profile-message-btn">
-        <i class="fab fa-facebook-messenger"></i> Message
+      <a href="https://x.com/_shofiqul_islam" target="_blank" rel="noopener noreferrer" class="profile-message-btn">
+        <i class="fab fa-x-twitter"></i> Twitter
       </a>
       <a href="mailto:shofiqulislamabid@gmail.com" class="profile-email-btn">
         <i class="fas fa-envelope"></i> Email
@@ -549,7 +551,7 @@
     <h2>You know how <em>to find me.</em></h2>
     <div class="contact-links">
       <a href="mailto:shofiqulislamabid@gmail.com?subject=Start%20user%20text&body=I%20am%20%5Byour%20name%5D%0A%0A"><i class="fas fa-envelope"></i> Email</a>
-      <a href="https://m.me/61591489238233" target="_blank" rel="noopener noreferrer"><i class="fab fa-facebook-messenger"></i> Messenger</a>
+      <a href="https://x.com/_shofiqul_islam" target="_blank" rel="noopener noreferrer"><i class="fab fa-x-twitter"></i> Twitter</a>
     </div>
   </div>
 </section>
@@ -658,6 +660,8 @@
     const img = document.createElement('img');
     img.src = url;
     img.alt = 'Cover photo';
+    img.setAttribute('fetchpriority', 'high');
+    img.decoding = 'async';
     coverPhoto.insertBefore(img, coverFallback);
     coverFallback.remove();
   }
@@ -666,27 +670,54 @@
   })();
 
   // Village gallery: auto-discover every picture-NN.ext file inside village-picture/
+  // Speed fix: instead of checking numbers one-by-one (await in a loop, which
+  // waits for each network round-trip before starting the next), we now fire
+  // ALL candidate checks for a batch of numbers in parallel with Promise.all.
+  // This turns "N sequential round trips" into "a few parallel batches",
+  // which is dramatically faster, especially on mobile networks.
   const VILLAGE_FOLDER = 'village-picture';
   const VILLAGE_EXTENSIONS = ['jpg','jpeg','png','webp','JPG','JPEG','PNG','WEBP'];
-  const VILLAGE_MAX_CHECK = 300;
-  const VILLAGE_MAX_GAP = 3;
+  const VILLAGE_MAX_CHECK = 60;   // highest picture number to probe for
+  const VILLAGE_BATCH_SIZE = 10;  // how many numbers to check at once
+  const VILLAGE_MAX_GAP = 3;      // stop after this many consecutive misses
+
+  // Checks one picture number against all extensions in parallel,
+  // returns the first extension that resolves (or null if none exist).
+  async function checkOneNumber(num){
+    const padded = String(num).padStart(2,'0');
+    const results = await Promise.all(
+      VILLAGE_EXTENSIONS.map(ext => {
+        const url = `${VILLAGE_FOLDER}/picture-${padded}.${ext}`;
+        return checkImageExists(url).then(ok => ok ? url : null);
+      })
+    );
+    return results.find(Boolean) || null;
+  }
 
   async function findVillagePictures(){
     const found = [];
-    let gap = 0;
-    for (let i = 1; i <= VILLAGE_MAX_CHECK && gap <= VILLAGE_MAX_GAP; i++){
-      const num = String(i).padStart(2,'0');
-      let hit = null;
-      for (const ext of VILLAGE_EXTENSIONS){
-        const url = `${VILLAGE_FOLDER}/picture-${num}.${ext}`;
-        // eslint-disable-next-line no-await-in-loop
-        if (await checkImageExists(url)){ hit = url; break; }
+    let consecutiveMisses = 0;
+
+    for (let start = 1; start <= VILLAGE_MAX_CHECK; start += VILLAGE_BATCH_SIZE){
+      const batchNums = [];
+      for (let n = start; n < start + VILLAGE_BATCH_SIZE && n <= VILLAGE_MAX_CHECK; n++){
+        batchNums.push(n);
       }
-      if (hit){
-        found.push(hit);
-        gap = 0;
-      } else {
-        gap++;
+      // Check the whole batch of numbers in parallel.
+      // eslint-disable-next-line no-await-in-loop
+      const batchResults = await Promise.all(batchNums.map(checkOneNumber));
+
+      for (const url of batchResults){
+        if (url){
+          found.push(url);
+          consecutiveMisses = 0;
+        } else {
+          consecutiveMisses++;
+        }
+      }
+
+      if (consecutiveMisses >= VILLAGE_BATCH_SIZE + VILLAGE_MAX_GAP && found.length > 0){
+        break; // several batches in a row with nothing new — stop probing
       }
     }
     return found;
@@ -748,7 +779,7 @@
     galleryStatus.remove();
     galleryGrid.innerHTML = urls.map((url, i) => `
       <div class="gallery-item" data-index="${i}">
-        <div class="frame"><img src="${url}" alt="My village photo ${i + 1}" loading="lazy"></div>
+        <div class="frame"><img src="${url}" alt="My village photo ${i + 1}" loading="${i < 4 ? 'eager' : 'lazy'}" decoding="async"></div>
         <span class="zoom-icon"><i class="fas fa-expand"></i> view</span>
       </div>
     `).join('');
