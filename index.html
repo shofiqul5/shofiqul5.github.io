@@ -1,0 +1,1069 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" content="#F5F5F7" media="(prefers-color-scheme: light)">
+<meta name="theme-color" content="#0B0B0D" media="(prefers-color-scheme: dark)">
+<title>Abid — MD Shofiqul Islam</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,500;9..144,600;9..144,900&family=Inter:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Comic+Relief:wght@400;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+<link rel="preload" as="image" href="images/profile.jpg">
+<link rel="preload" as="image" href="cover.jpg">
+<style>
+  :root{
+    color-scheme:light dark;
+    --font:'Comic Sans MS','Comic Sans','Comic Relief','Comic Neue',cursive;
+    --paper:#F5F5F7;
+    --paper-alt:#E6E6EA;
+    --ink:#0A0A0C;
+    --ink-soft:#55555E;
+    --rule:#8A5F00;
+    --on-rule:#FFFFFF;
+    --code:#3D3D47;
+    --line:rgba(10,10,12,0.16);
+    --line-strong:rgba(10,10,12,0.28);
+    --card:#FFFFFF;
+    --ruled-line:rgba(10,10,12,0.05);
+    --shadow:rgba(10,10,12,0.18);
+    --shadow-strong:rgba(10,10,12,0.28);
+    /* Surfaces that stay dark in both modes (preloader, side menu, lightbox) */
+    --night:#0A0A0C;
+    --night-alt:#17171B;
+    --on-night:#F5F5F7;
+    --on-night-soft:rgba(245,245,247,0.55);
+    --on-night-line:rgba(245,245,247,0.35);
+    --night-accent:#E6B422;
+    --highlight:#FFD43B;
+    /* Opening animation: teal and slate-blue bars with dark navy letters, same in light and dark mode */
+    --pre-bar:#00BBA6;
+    --pre-bar-alt:#4B698F;
+    --pre-ink:#07111F;
+    --pre-ink-soft:rgba(7,17,31,0.9);
+    --scrim:rgba(0,0,0,0.65);
+    --lightbox-bg:rgba(0,0,0,0.95);
+    --snow:#8FA9C9;
+  }
+  html{background:var(--paper);}
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--paper);
+    color:var(--ink);
+    font-family:var(--font);
+    background-image:
+      linear-gradient(var(--paper) 0px, var(--paper) 30px, var(--ruled-line) 31px);
+    background-size:100% 31px;
+    transition:background-color .35s ease, color .35s ease;
+  }
+  body.loading{overflow:hidden;}
+  .mono{font-family:var(--font);}
+  .display{font-family:var(--font);}
+  .container{max-width:960px;margin:0 auto;padding:0 28px 0 64px;position:relative;}
+  a{color:inherit;}
+
+  /* Margin rule running down the whole page — the notebook spine */
+  .margin-rule{
+    position:fixed;top:0;left:36px;bottom:0;width:2px;
+    background:var(--rule);opacity:0.65;z-index:5;pointer-events:none;
+  }
+  .punch{
+    position:fixed;left:22px;width:9px;height:9px;border-radius:50%;
+    background:var(--paper);border:1.5px solid var(--line-strong);z-index:6;
+  }
+
+  /* Preloader: curtain reveal — ruled bars descend away as letters fade in */
+  .preloader{
+    position:fixed;inset:0;z-index:9999;
+    display:flex;align-items:center;justify-content:center;
+    pointer-events:none;
+  }
+  .curtain-bars{
+    position:absolute;inset:0;display:flex;z-index:1;
+  }
+  .curtain-bars .bar{
+    /* Fixed teal and slate-blue bars with dark navy letters on purpose (not tied to --ink), so the
+       opening animation stays clearly visible in both light and dark mode. */
+    flex:1;height:100%;background:var(--pre-bar);
+    transform:translateY(0);
+    transition:transform .85s cubic-bezier(.65,0,.35,1);
+  }
+  .curtain-bars .bar:nth-child(odd){background:var(--pre-bar-alt);}
+  .curtain-bars.exit .bar{transform:translateY(100%);}
+  .curtain-letters{
+    position:relative;z-index:2;display:flex;gap:0.06em;
+    transition:opacity .4s ease;
+  }
+  .curtain-letters.exit{opacity:0;}
+  .curtain-letters span{
+    font-family:var(--font);font-weight:900;font-style:italic;
+    font-size:clamp(2.6rem,9vw,5.5rem);color:var(--pre-ink);line-height:1;
+    opacity:0;transform:translateY(28px);
+    animation:letterIn .65s cubic-bezier(.22,1,.36,1) forwards;
+  }
+  .curtain-letters span:nth-child(1){animation-delay:.15s;}
+  .curtain-letters span:nth-child(2){animation-delay:.24s;}
+  .curtain-letters span:nth-child(3){animation-delay:.33s;}
+  .curtain-letters span:nth-child(4){animation-delay:.42s;}
+  .curtain-caption{
+    position:absolute;bottom:14%;left:0;right:0;text-align:center;z-index:2;
+    font-family:var(--font);font-size:0.78rem;letter-spacing:0.18em;
+    color:var(--pre-ink-soft);text-transform:uppercase;
+    opacity:0;animation:capIn .5s ease forwards;animation-delay:.6s;
+    transition:opacity .3s ease;
+  }
+  .curtain-caption.exit{opacity:0 !important;}
+  @keyframes letterIn{ to{ opacity:1; transform:translateY(0); } }
+  @keyframes capIn{ to{ opacity:1; } }
+  @media (prefers-reduced-motion: reduce){
+    .curtain-bars .bar,.curtain-letters span,.curtain-caption{transition:none;animation:none;opacity:1;transform:none;}
+    .mobile-menu,.mobile-overlay,.menu-strip{transition:none !important;}
+  }
+
+  /* Winter snow: one light canvas, never blocks taps or scrolling */
+  #snow{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:3;}
+
+  /* Scroll reveal: classes are added by JS only, so the page still shows without JS */
+  .reveal{opacity:0;}
+  .reveal.in{animation:revealUp .75s cubic-bezier(.22,1,.36,1) var(--d,0ms) both;}
+  @keyframes revealUp{from{opacity:0;translate:0 26px;}to{opacity:1;translate:0 0;}}
+
+  /* Top-right cluster */
+  .top-right-cluster{
+    position:fixed;top:18px;right:18px;z-index:100;
+    transition:transform .4s cubic-bezier(.22,1,.36,1), opacity .4s ease;
+  }
+  .top-right-cluster.nav-hidden{ transform:translateY(-90px); opacity:0; }
+  nav#navPill{
+    background:var(--paper);
+    border:1.5px solid var(--ink);
+    border-radius:8px;
+    padding:6px;
+    display:inline-flex;align-items:center;justify-content:center;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .menu-btn{
+    display:flex;flex-direction:column;justify-content:center;align-items:center;
+    gap:4px;background:none;border:none;cursor:pointer;padding:10px;
+  }
+  .menu-btn span{
+    width:4px;height:4px;border-radius:50%;background:var(--ink);
+    transition:transform .35s ease, opacity .3s ease, width .35s ease, border-radius .35s ease, background .35s ease;
+  }
+  .menu-btn:hover span{background:var(--rule);}
+  .menu-btn.active span{background:var(--rule);}
+  .menu-btn.active span:nth-child(1){width:18px;border-radius:2px;transform:translateY(8px) rotate(45deg);}
+  .menu-btn.active span:nth-child(2){opacity:0;transform:scale(0);}
+  .menu-btn.active span:nth-child(3){width:18px;border-radius:2px;transform:translateY(-8px) rotate(-45deg);}
+
+  /* Overlay: opacity-only fade (no blur, keeps it light on phones) */
+  .mobile-overlay{
+    display:block;position:fixed;inset:0;background:var(--scrim);
+    z-index:150;opacity:0;visibility:hidden;pointer-events:none;
+    transition:opacity .3s ease, visibility 0s linear .3s;
+  }
+  .mobile-overlay.active{
+    opacity:1;visibility:visible;pointer-events:auto;
+    transition:opacity .3s ease, visibility 0s linear 0s;
+  }
+  /* Menu: the panel is cut into 12 horizontal strips (top to bottom).
+     The first 6 strips hold the buttons. Each strip slides in from the right
+     one after another, and slides back out the same way (transform only = smooth). */
+  .mobile-menu{
+    position:fixed;top:0;right:0;width:240px;height:100%;
+    z-index:200;display:flex;flex-direction:column;
+    pointer-events:none;visibility:hidden;
+    transition:visibility 0s linear .8s;
+  }
+  .mobile-menu.active{
+    pointer-events:auto;visibility:visible;
+    transition:visibility 0s linear 0s;
+  }
+  .menu-strip{
+    flex:1 1 0;min-height:0;
+    display:flex;align-items:center;padding:0 16px;
+    background:var(--night);
+    border-left:3px solid var(--rule);
+    transform:translate3d(105%,0,0);
+    will-change:transform;backface-visibility:hidden;
+    transition:transform .32s cubic-bezier(.5,0,.75,0) calc(var(--i) * var(--out, 22ms));
+  }
+  .menu-strip:nth-child(even){background:var(--night-alt);}
+  .mobile-menu.active .menu-strip{
+    transform:translate3d(0,0,0);
+    transition:transform .45s cubic-bezier(.22,1,.36,1) calc(var(--i) * var(--in, 40ms));
+  }
+  .menu-btn-link{
+    width:100%;display:flex;align-items:center;gap:12px;
+    padding:11px 14px;border-radius:8px;
+    border:1.5px solid var(--on-night-line);
+    color:var(--on-night);text-decoration:none;
+    font-family:var(--font);font-size:0.92rem;
+    transition:background .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .menu-btn-link i{color:var(--night-accent);width:16px;text-align:center;transition:color .2s ease;}
+  .menu-btn-link:hover,.menu-btn-link:active{
+    background:var(--rule);border-color:var(--rule);color:var(--on-rule);
+  }
+  .menu-btn-link:hover i,.menu-btn-link:active i{color:var(--on-rule);}
+  .menu-email{
+    width:100%;display:block;text-align:center;text-decoration:none;
+    font-family:var(--font);font-weight:600;font-size:0.8rem;
+    color:var(--highlight);letter-spacing:0.01em;
+    overflow-wrap:anywhere;line-height:1.3;
+    transition:color .2s ease;
+  }
+  .menu-email i{margin-right:6px;font-size:0.85em;}
+  .menu-email:hover,.menu-email:active{color:var(--on-night);}
+  @media (min-width:900px){
+    .menu-email{font-size:0.95rem;}
+    .mobile-menu{width:300px;}
+    .menu-strip{padding:0 22px;}
+    .menu-btn-link{font-size:1rem;padding:12px 18px;}
+  }
+
+  section{padding:96px 0;border-bottom:1px solid var(--line);}
+
+  /* Margin note — replaces eyebrow, looks like a rotated sticky tab pinned in the margin */
+  .margin-note{
+    font-family:var(--font);font-size:0.78rem;
+    color:var(--on-rule);background:var(--rule);
+    letter-spacing:0.06em;margin-bottom:22px;
+    display:inline-block;padding:4px 10px;border-radius:2px;
+    transform:rotate(-2deg);
+    box-shadow:2px 2px 0 var(--ink);
+  }
+
+  /* Profile header — cover photo + overlapping circular avatar, FB-style */
+  .profile-header{margin-top:0;}
+  .cover-photo{
+    width:100%;height:clamp(160px,30vw,300px);overflow:hidden;position:relative;
+    background:var(--paper-alt);border-bottom:2px solid var(--ink);
+  }
+  .cover-photo img{width:100%;height:100%;object-fit:cover;filter:sepia(8%) contrast(1.02);}
+  .cover-fallback{
+    width:100%;height:100%;display:flex;align-items:center;justify-content:center;
+    background:repeating-linear-gradient(135deg, var(--paper-alt) 0 18px, var(--paper) 18px 36px);
+    font-family:var(--font);color:var(--ink-soft);font-size:0.8rem;text-align:center;
+  }
+  .profile-header-body{
+    max-width:960px;margin:0 auto;padding:0 28px 36px 64px;position:relative;
+  }
+  .profile-pic{
+    margin-top:-58px;width:126px;height:126px;border-radius:20px;overflow:hidden;
+    border:5px solid var(--paper);box-shadow:0 6px 16px var(--shadow-strong);
+    background:var(--paper-alt);position:relative;z-index:2;
+  }
+  .profile-pic img{width:100%;height:100%;object-fit:cover;filter:sepia(8%) contrast(1.02);}
+  .profile-name{
+    font-family:var(--font);font-weight:800;font-size:clamp(1.5rem,4vw,2rem);
+    margin-top:16px;
+  }
+  .profile-tagline{
+    font-family:var(--font);font-size:0.82rem;color:var(--ink-soft);
+    margin-top:6px;
+  }
+  .profile-message-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:var(--ink);color:var(--paper);text-decoration:none;
+    font-family:var(--font);font-size:0.85rem;
+    padding:11px 22px;border-radius:6px;border:1.5px solid var(--ink);
+    box-shadow:3px 3px 0 var(--rule);transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .profile-message-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--rule);}
+  .profile-btn-row{margin-top:16px;display:flex;flex-wrap:wrap;gap:12px;}
+  .profile-email-btn{
+    display:inline-flex;align-items:center;gap:8px;
+    background:transparent;color:var(--ink);text-decoration:none;
+    font-family:var(--font);font-size:0.85rem;
+    padding:11px 22px;border-radius:6px;border:1.5px solid var(--ink);
+    box-shadow:3px 3px 0 var(--code);transition:transform .15s ease, box-shadow .15s ease;
+  }
+  .profile-email-btn:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--code);}
+
+  /* About */
+  .about-grid{display:grid;grid-template-columns:0.8fr 1.2fr;gap:60px;align-items:start;}
+  .about-grid h2{font-family:var(--font);font-weight:600;font-size:2.1rem;margin-bottom:0;line-height:1.15;}
+  .about-grid p{color:var(--ink-soft);margin-bottom:16px;line-height:1.8;font-size:1.02rem;}
+  .about-tag{
+    font-family:var(--font);font-size:0.82rem;
+    color:var(--code);border:1px dashed var(--line-strong);
+    display:inline-block;padding:9px 14px;border-radius:3px;margin-top:6px;
+  }
+
+  /* Education — ruled ledger */
+  .edu-item{
+    display:grid;grid-template-columns:150px 1fr;gap:30px;
+    padding:30px 0;border-top:1px dashed var(--line-strong);
+  }
+  .edu-item:last-child{border-bottom:1px dashed var(--line-strong);}
+  .edu-period{font-family:var(--font);font-size:0.85rem;color:var(--rule);}
+  .edu-item h3{font-family:var(--font);font-weight:600;font-size:1.35rem;margin-bottom:6px;}
+  .edu-item .role{color:var(--code);font-family:var(--font);font-size:0.82rem;margin-bottom:10px;display:block;}
+  .edu-item p{color:var(--ink-soft);line-height:1.7;}
+
+  /* Skills — grouped like code tags vs. handwritten tags */
+  .skills-group{margin-bottom:44px;}
+  .skills-group:last-child{margin-bottom:0;}
+  .skills-group-label{
+    font-family:var(--font);font-size:0.78rem;color:var(--ink-soft);
+    letter-spacing:0.08em;margin-bottom:16px;text-transform:uppercase;
+  }
+  .tag-grid{display:flex;flex-wrap:wrap;gap:12px;}
+  .tag-code{
+    font-family:var(--font);font-size:0.88rem;color:var(--code);
+    background:var(--card);border:1.5px solid var(--code);border-radius:4px;
+    padding:9px 14px;transition:transform .15s ease, background .15s ease;
+  }
+  .tag-code:hover{background:var(--code);color:var(--card);transform:translateY(-2px);}
+  .tag-soft{
+    font-family:var(--font);font-style:italic;font-size:0.95rem;color:var(--ink);
+    background:var(--paper-alt);border:1px solid var(--line-strong);border-radius:20px;
+    padding:9px 18px;transition:transform .15s ease;
+  }
+  .tag-soft:hover{transform:translateY(-2px);}
+
+  /* Village Gallery — scrapbook page */
+  .gallery-sub{color:var(--ink-soft);max-width:520px;line-height:1.75;margin-bottom:34px;}
+  .gallery-grid{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(210px,1fr));
+    gap:28px 20px;
+  }
+  .gallery-item{
+    position:relative;background:var(--card);padding:10px 10px 34px 10px;
+    box-shadow:0 8px 18px var(--shadow);
+    cursor:pointer;transition:transform .3s ease, box-shadow .3s ease, background .35s ease;
+  }
+  .gallery-item:nth-child(odd){transform:rotate(-2deg);}
+  .gallery-item:nth-child(even){transform:rotate(2deg);}
+  .gallery-item:hover{transform:rotate(0deg) translateY(-4px);box-shadow:0 14px 26px var(--shadow-strong);}
+  .gallery-item .frame{aspect-ratio:4/3;overflow:hidden;background:var(--paper-alt);}
+  .gallery-item img{
+    width:100%;height:100%;object-fit:cover;display:block;
+    filter:sepia(10%);transition:transform .5s ease, filter .4s ease;
+  }
+  .gallery-item:hover img{transform:scale(1.06);filter:sepia(0%);}
+  .gallery-item .zoom-icon{
+    position:absolute;bottom:8px;right:10px;
+    color:var(--ink-soft);font-size:0.75rem;
+    font-family:var(--font);
+    opacity:0;transition:opacity .25s ease;
+  }
+  .gallery-item:hover .zoom-icon{opacity:1;}
+
+  /* Lightbox */
+  .lightbox{
+    position:fixed;inset:0;z-index:500;
+    background:var(--lightbox-bg);
+    display:none;align-items:center;justify-content:center;
+    padding:40px;opacity:0;transition:opacity .3s ease;
+  }
+  .lightbox.active{display:flex;opacity:1;}
+  .lightbox img{
+    max-width:90vw;max-height:82vh;border-radius:2px;
+    border:6px solid #FCFBFF;
+    transform:scale(0.96);transition:transform .3s cubic-bezier(.22,1,.36,1);
+  }
+  .lightbox.active img{transform:scale(1);}
+  .lightbox-close{
+    position:absolute;top:24px;right:28px;
+    width:42px;height:42px;border-radius:50%;
+    border:1.5px solid #FCFBFF;background:transparent;
+    color:#FCFBFF;font-size:1.1rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s, color .2s;
+  }
+  .lightbox-close:hover{border-color:var(--rule);color:var(--rule);}
+  .lightbox-nav{
+    position:absolute;top:50%;transform:translateY(-50%);
+    width:46px;height:46px;border-radius:50%;
+    border:1.5px solid #FCFBFF;background:transparent;
+    color:#FCFBFF;font-size:1rem;cursor:pointer;
+    display:flex;align-items:center;justify-content:center;
+    transition:border-color .2s, color .2s;
+  }
+  .lightbox-nav:hover{border-color:var(--rule);color:var(--rule);}
+  .lightbox-prev{left:24px;}
+  .lightbox-next{right:24px;}
+  .lightbox-counter{
+    position:absolute;bottom:26px;left:50%;transform:translateX(-50%);
+    font-family:var(--font);font-size:0.8rem;color:var(--on-night);
+  }
+
+  /* Contact */
+  .contact-inner{text-align:left;}
+  .contact-inner h2{
+    font-family:var(--font);font-weight:900;
+    font-size:clamp(2rem,5vw,3.2rem);margin-bottom:20px;line-height:1.12;
+  }
+  .contact-inner h2 em{color:var(--rule);font-style:italic;}
+  .contact-links{display:flex;gap:16px;flex-wrap:wrap;margin-top:28px;}
+  .contact-links a{
+    font-family:var(--font);font-size:0.9rem;
+    border:1.5px solid var(--ink);border-radius:4px;
+    text-decoration:none;display:flex;align-items:center;justify-content:center;gap:10px;
+    transition:transform .15s ease, box-shadow .15s ease;
+    width:200px;height:52px;
+    flex:0 0 auto;box-sizing:border-box;
+    box-shadow:3px 3px 0 var(--ink);
+  }
+  .contact-links a:hover{transform:translate(-2px,-2px);box-shadow:5px 5px 0 var(--rule);}
+
+  @media (max-width:480px){
+    .contact-links{flex-direction:column;}
+    .contact-links a{width:100%;}
+    .lightbox-nav{width:38px;height:38px;}
+    .lightbox-prev{left:8px;}
+    .lightbox-next{right:8px;}
+  }
+
+  footer{
+    padding:32px 0;text-align:center;
+    color:var(--ink-soft);font-family:var(--font);font-size:0.82rem;
+  }
+  footer .accent{color:var(--rule);}
+
+  @media (max-width:720px){
+    .container{padding-left:52px;}
+    .margin-rule{left:28px;}
+    .punch{left:14px;}
+    .about-grid{grid-template-columns:1fr;gap:20px;}
+    .edu-item{grid-template-columns:1fr;gap:8px;}
+    .profile-header-body{padding:0 20px 30px 52px;}
+    .profile-pic{width:100px;height:100px;margin-top:-48px;}
+  }
+
+  @media (max-width:360px){
+    .profile-pic{width:84px;height:84px;margin-top:-40px;}
+    .profile-name{font-size:1.35rem;}
+  }
+
+  /* ===== Auto color mode: follows the visitor's device (light / dark) =====
+     No manual switch — the page switches by itself when the phone or computer
+     changes its appearance setting (or its own day/night schedule). */
+  @media (prefers-color-scheme: dark){
+    :root{
+      --paper:#0B0B0D;
+      --paper-alt:#17171B;
+      --ink:#F2F2F4;
+      --ink-soft:#A0A0AA;
+      --rule:#E6B422;
+      --on-rule:#0B0B0D;
+      --code:#C8C8D2;
+      --line:rgba(242,242,244,0.12);
+      --line-strong:rgba(242,242,244,0.24);
+      --card:#141418;
+      --ruled-line:rgba(242,242,244,0.05);
+      --shadow:rgba(0,0,0,0.40);
+      --shadow-strong:rgba(0,0,0,0.55);
+      --snow:#FFFFFF;
+    }
+  }
+</style>
+</head>
+<body class="loading">
+
+<div class="preloader" id="preloader">
+  <div class="curtain-bars" id="curtainBars">
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+    <span class="bar"></span><span class="bar"></span><span class="bar"></span>
+  </div>
+  <div class="curtain-letters" id="curtainLetters">
+    <span>A</span><span>B</span><span>I</span><span>D</span>
+  </div>
+  <div class="curtain-caption" id="curtainCaption">Kushtia, Bangladesh</div>
+</div>
+
+<canvas id="snow" aria-hidden="true"></canvas>
+<div class="margin-rule"></div>
+
+<div class="top-right-cluster" id="topRightCluster">
+  <nav id="navPill">
+    <button class="menu-btn" id="menuBtn" aria-label="Toggle menu">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+</div>
+
+<div class="mobile-overlay" id="mobileOverlay"></div>
+<div class="mobile-menu" id="mobileMenu"></div>
+
+<div class="profile-header" id="home">
+  <div class="cover-photo" id="coverPhoto">
+    <div class="cover-fallback" id="coverFallback">Kushtia, Bangladesh</div>
+  </div>
+  <div class="profile-header-body">
+    <div class="profile-pic">
+      <img src="images/profile.jpg" alt="Shofiqul Islam profile picture" fetchpriority="high" decoding="async">
+    </div>
+    <h1 class="profile-name">MD Shofiqul Islam</h1>
+    <div class="profile-tagline mono">HSC 2026 · Admission Candidate · Kushtia, Bangladesh</div>
+    <div class="profile-btn-row">
+      <a href="https://github.com/shofiqul5" target="_blank" rel="noopener noreferrer" class="profile-message-btn">
+        <i class="fab fa-github"></i> GitHub
+      </a>
+      <a href="mailto:shofiqulislamabid@gmail.com" class="profile-email-btn">
+        <i class="fas fa-envelope"></i> Email
+      </a>
+    </div>
+  </div>
+</div>
+
+<section id="about">
+  <div class="container about-grid">
+    <div>
+      <span class="margin-note">01 · ABOUT</span>
+      <h2>This is me.</h2>
+    </div>
+    <div>
+      <p>I'm Shofiqul. I completed my Higher Secondary Certificate at Jhaudia College in Kushtia, Bangladesh in 2026, and I'm now preparing for university admission exams. My focus is the Humanities — language, society, and ideas — but I spend just as much time in a code editor, teaching myself web design and C++.</p>
+      <p>I believe in steady, consistent effort over shortcuts, and in staying grounded while I grow — academically, technically, and personally.</p>
+      <span class="about-tag">grateful for every lesson learned</span>
+    </div>
+  </div>
+</section>
+
+<section id="education">
+  <div class="container">
+    <span class="margin-note">02 · EDUCATION</span>
+    <h2 class="display" style="font-size:2.1rem;font-weight:600;margin-bottom:8px;">My Background</h2>
+    <div class="edu-item">
+      <div class="edu-period mono">Present</div>
+      <div>
+        <h3>University Admission Preparation</h3>
+        <span class="role">Admission Exams · Humanities Background</span>
+        <p>Preparing for university admission tests after completing HSC, working toward the next step in my academic journey.</p>
+      </div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-period mono">Completed 2026</div>
+      <div>
+        <h3>Jhaudia College</h3>
+        <span class="role">Higher Secondary Certificate (HSC) · Humanities Group</span>
+        <p>Kushtia, Bangladesh. Completed higher secondary education, building skills in analysis, writing, and critical thinking.</p>
+      </div>
+    </div>
+    <div class="edu-item">
+      <div class="edu-period mono">Completed 2024</div>
+      <div>
+        <h3>Jhaudia Bazar Secondary High School</h3>
+        <span class="role">Secondary School Certificate (SSC) · Humanities Group</span>
+        <p>Kushtia, Bangladesh. Completed foundational secondary education.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="skills">
+  <div class="container">
+    <span class="margin-note">03 · SKILLS</span>
+    <h2 class="display" style="font-size:2.1rem;font-weight:600;margin-bottom:34px;">What I Work With</h2>
+
+    <div class="skills-group">
+      <div class="skills-group-label">// technical</div>
+      <div class="tag-grid">
+        <span class="tag-code">&lt;Website Design/&gt;</span>
+        <span class="tag-code">C++ Programming</span>
+        <span class="tag-code">Computer Literacy</span>
+      </div>
+    </div>
+
+    <div class="skills-group">
+      <div class="skills-group-label">— languages &amp; people</div>
+      <div class="tag-grid">
+        <span class="tag-soft">Bengali (Native)</span>
+        <span class="tag-soft">English (Working)</span>
+        <span class="tag-soft">Arabic (Reading)</span>
+        <span class="tag-soft">Communication</span>
+        <span class="tag-soft">Time Management</span>
+        <span class="tag-soft">Teamwork</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="village">
+  <div class="container">
+    <span class="margin-note">04 · MY VILLAGE</span>
+    <h2 class="display" style="font-size:2.1rem;font-weight:600;margin-bottom:14px;">Jhaudia, Kushtia</h2>
+    <p class="gallery-sub">A few glimpses of home — the fields, the roads, the everyday moments of my village. Click any photo to view it larger.</p>
+    <p class="gallery-sub mono" id="galleryStatus" style="font-size:0.8rem;">Loading photos…</p>
+    <div class="gallery-grid" id="galleryGrid"></div>
+  </div>
+</section>
+
+<div class="lightbox" id="lightbox">
+  <button class="lightbox-close" id="lightboxClose" aria-label="Close"><i class="fas fa-xmark"></i></button>
+  <button class="lightbox-nav lightbox-prev" id="lightboxPrev" aria-label="Previous"><i class="fas fa-chevron-left"></i></button>
+  <img src="" alt="" id="lightboxImg">
+  <button class="lightbox-nav lightbox-next" id="lightboxNext" aria-label="Next"><i class="fas fa-chevron-right"></i></button>
+  <div class="lightbox-counter" id="lightboxCounter"></div>
+</div>
+
+<section id="contact" style="border-bottom:none;">
+  <div class="container contact-inner">
+    <span class="margin-note">05 · CONTACT</span>
+    <h2>You know how <em>to find me.</em></h2>
+    <div class="contact-links">
+      <a href="mailto:shofiqulislamabid@gmail.com?subject=Start%20user%20text&body=I%20am%20%5Byour%20name%5D%0A%0A"><i class="fas fa-envelope"></i> Email</a>
+      <a href="https://github.com/shofiqul5" target="_blank" rel="noopener noreferrer"><i class="fab fa-github"></i> GitHub</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <span class="mono">$</span> built by <span class="accent">Abid</span> · &copy; 2026
+</footer>
+
+<script>
+  // ===== Winter snow (light on purpose: 30 fps cap, few flakes, auto-trims on slow devices) =====
+  (function winterSnow(){
+    if (matchMedia('(prefers-reduced-motion: reduce)').matches) return;
+    const cv = document.getElementById('snow');
+    const ctx = cv.getContext('2d');
+    const conn = navigator.connection || {};
+    const weak = (navigator.hardwareConcurrency || 4) <= 4 || conn.saveData === true;
+    const ALPHA = [0.45, 0.7, 0.9];
+    const SHARE = [0.5, 0.32, 0.18];
+    let W = 0, H = 0, color = '#fff', scale = 1;
+    let layers = [[], [], []];
+    let raf = 0, last = 0, avg = 33, frames = 0, running = false, started = false;
+
+    function readColor(){
+      color = getComputedStyle(document.documentElement).getPropertyValue('--snow').trim() || '#fff';
+    }
+    function make(l, anywhere){
+      const r = [1.1 + Math.random()*0.6, 1.9 + Math.random()*0.7, 2.8 + Math.random()*0.9][l];
+      return { x: Math.random()*W, y: anywhere ? Math.random()*H : -r*2, r: r,
+               vy: [22, 38, 58][l] * (0.8 + Math.random()*0.4),
+               sw: 6 + Math.random()*14, ph: Math.random()*6.28 };
+    }
+    function fill(){
+      const want = Math.max(30, Math.min(weak ? 70 : 130, Math.round(W*H/7000))) * scale;
+      for (let l = 0; l < 3; l++){
+        const n = Math.round(want * SHARE[l]), a = layers[l];
+        while (a.length < n) a.push(make(l, true));
+        if (a.length > n) a.length = n;
+      }
+    }
+    function resize(){
+      W = innerWidth; H = innerHeight;
+      cv.width = W; cv.height = H;
+      fill();
+    }
+    function frame(t){
+      if (!running) return;
+      raf = requestAnimationFrame(frame);
+      const dt = t - last;
+      if (dt < 30) return;               // ~30 fps is plenty for snow
+      last = t;
+      const s = Math.min(dt, 100) / 1000;
+      avg = avg*0.9 + dt*0.1;
+      if (++frames % 45 === 0 && avg > 48 && scale > 0.3){ scale *= 0.7; fill(); } // slow device: fewer flakes
+      ctx.clearRect(0, 0, W, H);
+      ctx.fillStyle = color;
+      const wind = Math.sin(t/4000) * 8;
+      for (let l = 0; l < 3; l++){
+        const a = layers[l];
+        ctx.globalAlpha = ALPHA[l];
+        ctx.beginPath();                 // one path + one fill per layer
+        for (let i = 0; i < a.length; i++){
+          const f = a[i];
+          f.y += f.vy * s;
+          f.x += (Math.sin(t/1800 + f.ph) * f.sw + wind) * s;
+          if (f.y > H + f.r){ f.y = -f.r*2; f.x = Math.random()*W; }
+          if (f.x > W + 4) f.x = -4; else if (f.x < -4) f.x = W + 4;
+          ctx.moveTo(f.x + f.r, f.y);
+          ctx.arc(f.x, f.y, f.r, 0, 6.2832);
+        }
+        ctx.fill();
+      }
+    }
+    function start(){ if (running) return; running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
+    function stop(){ running = false; cancelAnimationFrame(raf); }
+
+    readColor(); resize();
+    const mq = matchMedia('(prefers-color-scheme: dark)');
+    if (mq.addEventListener) mq.addEventListener('change', readColor); else if (mq.addListener) mq.addListener(readColor);
+    let t0; window.addEventListener('resize', () => { clearTimeout(t0); t0 = setTimeout(resize, 200); });
+    document.addEventListener('visibilitychange', () => { if (!started) return; document.hidden ? stop() : start(); }); // paused in background tabs
+    setTimeout(() => { started = true; if (!document.hidden) start(); }, 2000);   // begins as the opening curtain lifts
+  })();
+
+  // ===== Scroll reveal animation =====
+  const REDUCE_MOTION = matchMedia('(prefers-reduced-motion: reduce)').matches;
+  let revealIO = null;
+  const revealQueue = [];
+  function registerReveal(el, i){
+    if (REDUCE_MOTION || !el) return;
+    el.classList.add('reveal');
+    el.style.setProperty('--d', ((i || 0) * 80) + 'ms');
+    if (revealIO) revealIO.observe(el); else revealQueue.push(el);
+  }
+  function startReveal(){
+    if (!('IntersectionObserver' in window)){ revealQueue.forEach(el => el.classList.remove('reveal')); return; }
+    revealIO = new IntersectionObserver((entries) => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        const el = e.target;
+        revealIO.unobserve(el);
+        el.classList.add('in');
+        el.addEventListener('animationend', (ev) => {
+          if (ev.target !== el) return;
+          el.classList.remove('reveal', 'in');
+          el.style.removeProperty('--d');
+        });
+      });
+    }, { threshold: 0.12, rootMargin: '0px 0px -6% 0px' });
+    revealQueue.forEach(el => revealIO.observe(el));
+    revealQueue.length = 0;
+  }
+  ['.profile-pic', '.profile-name', '.profile-tagline', '.profile-btn-row'].forEach((q, i) => registerReveal(document.querySelector(q), i));
+  document.querySelectorAll('section').forEach(sec => {
+    sec.querySelectorAll('.margin-note').forEach(el => registerReveal(el, 0));
+    sec.querySelectorAll('h2').forEach(el => registerReveal(el, 1));
+  });
+  document.querySelectorAll('.about-grid p, .about-tag, .gallery-sub').forEach((el, i) => registerReveal(el, 1 + (i % 3)));
+  document.querySelectorAll('.edu-item').forEach(el => registerReveal(el, 0));
+  document.querySelectorAll('.skills-group').forEach(g => {
+    registerReveal(g.querySelector('.skills-group-label'), 0);
+    g.querySelectorAll('.tag-code, .tag-soft').forEach((el, i) => registerReveal(el, i));
+  });
+  document.querySelectorAll('.contact-links a').forEach((el, i) => registerReveal(el, i));
+  registerReveal(document.querySelector('footer'), 0);
+  setTimeout(startReveal, 1700);   // starts while the opening curtain lifts
+
+  // Curtain-reveal preloader: letters fade in over the bars, then the bars
+  // descend away (staggered) to uncover the page underneath.
+  const preloader = document.getElementById('preloader');
+  const curtainBars = document.getElementById('curtainBars');
+  const curtainLetters = document.getElementById('curtainLetters');
+  const curtainCaption = document.getElementById('curtainCaption');
+  document.body.classList.add('loading');
+
+  Array.from(curtainBars.children).forEach((bar, i) => {
+    bar.style.transitionDelay = (i * 0.06) + 's';
+  });
+
+  setTimeout(() => {
+    curtainLetters.classList.add('exit');
+    curtainCaption.classList.add('exit');
+    curtainBars.classList.add('exit');
+  }, 1150);
+
+  setTimeout(() => {
+    preloader.remove();
+    document.body.classList.remove('loading');
+  }, 2150);
+
+  // Mobile 3-dot menu
+  // Menu strips: the number of strips depends on the screen height, so every
+  // strip stays roughly the same size on a phone and on a big PC screen.
+  const MENU_LINKS = [
+    null,   // first strip is intentionally left empty
+    ['home','fa-house','Home'],
+    ['about','fa-user','About Me'],
+    ['education','fa-graduation-cap','Education'],
+    ['skills','fa-layer-group','Skills'],
+    ['village','fa-tree','My Village'],
+    ['contact','fa-envelope','Contact'],
+    ['https://document.us.ci','fa-globe','Website']
+  ];
+  const STRIP_TARGET_PX = 64;   // wanted height of one strip
+  const STRIPS_REMOVED = 2;     // strips cut off from the bottom of the menu
+  function buildMenuStrips(){
+    const menu = document.getElementById('mobileMenu');
+    // Full-height strip count, then drop the bottom 2 strips (same size on phone and PC).
+    const fullCount = Math.max(MENU_LINKS.length + 3, Math.round(window.innerHeight / STRIP_TARGET_PX));
+    const stripH = window.innerHeight / fullCount;
+    const count = fullCount - STRIPS_REMOVED;
+    const key = count + '-' + Math.round(stripH);
+    if (menu.dataset.count === key) return;
+    menu.dataset.count = key;
+    menu.style.height = (count * stripH) + 'px';
+    menu.innerHTML = '';
+    // keep the whole animation under ~0.9s no matter how many strips there are
+    menu.style.setProperty('--in',  Math.min(40, 520 / count) + 'ms');
+    menu.style.setProperty('--out', Math.min(22, 300 / count) + 'ms');
+    for (let i = 0; i < count; i++){
+      const strip = document.createElement('div');
+      strip.className = 'menu-strip';
+      strip.style.setProperty('--i', i);
+      if (i < MENU_LINKS.length && MENU_LINKS[i]){
+        const [id, icon, label] = MENU_LINKS[i];
+        const isExternal = /^https?:\/\//.test(id);
+        const href = isExternal ? id : '#' + id;
+        const extra = isExternal ? ' target="_blank" rel="noopener noreferrer"' : '';
+        strip.innerHTML = `<a class="menu-btn-link" href="${href}"${extra}><i class="fas ${icon}"></i> ${label}</a>`;
+        strip.querySelector('a').addEventListener('click', closeMenu);
+      }
+      if (i === count - 1){
+        strip.classList.add('last');
+        // last (bottom) strip: email address
+        strip.innerHTML = `<a class="menu-email" href="mailto:shofiqulislamabid@gmail.com"><i class="fas fa-envelope"></i>shofiqulislamabid@gmail.com</a>`;
+        strip.querySelector('a').addEventListener('click', closeMenu);
+      }
+      menu.appendChild(strip);
+    }
+  }
+  let menuResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(menuResizeTimer);
+    menuResizeTimer = setTimeout(buildMenuStrips, 200);
+  });
+
+  const menuBtn = document.getElementById('menuBtn');
+  const mobileMenu = document.getElementById('mobileMenu');
+  const mobileOverlay = document.getElementById('mobileOverlay');
+
+  function closeMenu(){
+    mobileMenu.classList.remove('active');
+    mobileOverlay.classList.remove('active');
+    menuBtn.classList.remove('active');
+  }
+
+  menuBtn.addEventListener('click', () => {
+    mobileMenu.classList.toggle('active');
+    mobileOverlay.classList.toggle('active');
+    menuBtn.classList.toggle('active');
+  });
+  mobileOverlay.addEventListener('click', closeMenu);
+  buildMenuStrips();
+
+  // Top-right cluster: hide on scroll down, show on scroll up
+  const topRightCluster = document.getElementById('topRightCluster');
+  let lastScroll = 0;
+  window.addEventListener('scroll', () => {
+    const current = window.scrollY;
+    if (current > lastScroll && current > 80) {
+      topRightCluster.classList.add('nav-hidden');
+      closeMenu();
+    } else {
+      topRightCluster.classList.remove('nav-hidden');
+    }
+    lastScroll = current;
+  });
+
+  // Margin punch holes (decorative, spaced down the rule line).
+  let existingPunches = [];
+  function addPunches(){
+    existingPunches.forEach(p => p.remove());
+    existingPunches = [];
+    const count = Math.ceil(document.body.scrollHeight / 140);
+    const frag = document.createDocumentFragment();
+    for(let i=0;i<count;i++){
+      const p = document.createElement('div');
+      p.className = 'punch';
+      p.style.top = (70 + i*140) + 'px';
+      existingPunches.push(p);
+      frag.appendChild(p);
+    }
+    document.body.appendChild(frag);
+  }
+  addPunches();
+  window.addEventListener('load', addPunches);
+  let punchResizeTimer;
+  window.addEventListener('resize', () => {
+    clearTimeout(punchResizeTimer);
+    punchResizeTimer = setTimeout(addPunches, 200);
+  });
+
+  // Shared image-existence check, used by both the cover photo and the
+  // village gallery below.
+  function checkImageExists(url){
+    return new Promise((resolve) => {
+      const img = new Image();
+      img.onload = () => resolve(true);
+      img.onerror = () => resolve(false);
+      img.src = url;
+    });
+  }
+
+  // Cover photo: uses cover.jpg at the repo root if it exists, otherwise
+  // keeps the text fallback shown in the profile header.
+  const coverPhoto = document.getElementById('coverPhoto');
+  const coverFallback = document.getElementById('coverFallback');
+  function setCoverPhoto(url){
+    const img = document.createElement('img');
+    img.src = url;
+    img.alt = 'Cover photo';
+    img.setAttribute('fetchpriority', 'high');
+    img.decoding = 'async';
+    coverPhoto.insertBefore(img, coverFallback);
+    coverFallback.remove();
+  }
+  (async function initCover(){
+    if (await checkImageExists('cover.jpg')) setCoverPhoto('cover.jpg');
+  })();
+
+  // ===== Village gallery =====
+  // SPEED FIX: the old version had to *guess* every filename (checking
+  // numbers 01–60 against 8 possible extensions each = up to 480 test
+  // downloads) before it could show a single photo. That guessing is what
+  // made the village pictures so much slower than the profile/cover photos,
+  // which are referenced directly with a known filename.
+  //
+  // Fix #1 (fastest, recommended): if a file named `manifest.json` exists
+  // inside the village-picture folder listing the real filenames, e.g.
+  //   ["picture-01.jpg","picture-02.jpg","picture-03.png"]
+  // the gallery loads it with ONE request and shows every photo instantly —
+  // no guessing at all. This is the same "known filename" trick the
+  // profile/cover photos already use.
+  //
+  // Fix #2 (fallback, only used if manifest.json is missing): the old
+  // guess-every-number method still works as a backup, but now renders each
+  // batch of found photos onto the page immediately instead of waiting for
+  // the entire scan to finish, so the first pictures appear much sooner.
+  const VILLAGE_FOLDER = 'village-picture';
+  const VILLAGE_EXTENSIONS = ['jpg','jpeg','png','webp','JPG','JPEG','PNG','WEBP'];
+  const VILLAGE_MAX_CHECK = 60;   // highest picture number to probe for
+  const VILLAGE_BATCH_SIZE = 10;  // how many numbers to check at once
+  const VILLAGE_MAX_GAP = 3;      // stop after this many consecutive misses
+
+  async function loadVillageManifest(){
+    try{
+      const res = await fetch(`${VILLAGE_FOLDER}/manifest.json`, { cache: 'no-store' });
+      if(!res.ok) return null;
+      const list = await res.json();
+      if(Array.isArray(list) && list.length){
+        return list.map(name => `${VILLAGE_FOLDER}/${name}`);
+      }
+    }catch(e){ /* no manifest — fall back to guessing below */ }
+    return null;
+  }
+
+  // Checks one picture number against all extensions in parallel,
+  // returns the first extension that resolves (or null if none exist).
+  async function checkOneNumber(num){
+    const padded = String(num).padStart(2,'0');
+    const results = await Promise.all(
+      VILLAGE_EXTENSIONS.map(ext => {
+        const url = `${VILLAGE_FOLDER}/picture-${padded}.${ext}`;
+        return checkImageExists(url).then(ok => ok ? url : null);
+      })
+    );
+    return results.find(Boolean) || null;
+  }
+
+  const galleryGrid = document.getElementById('galleryGrid');
+  const galleryStatus = document.getElementById('galleryStatus');
+  const lightbox = document.getElementById('lightbox');
+  const lightboxImg = document.getElementById('lightboxImg');
+  const lightboxCounter = document.getElementById('lightboxCounter');
+  const lightboxClose = document.getElementById('lightboxClose');
+  const lightboxPrev = document.getElementById('lightboxPrev');
+  const lightboxNext = document.getElementById('lightboxNext');
+  let galleryImgs = [];
+  let currentIndex = 0;
+
+  function openLightbox(index){
+    currentIndex = index;
+    updateLightbox();
+    lightbox.classList.add('active');
+  }
+  function updateLightbox(){
+    lightboxImg.src = galleryImgs[currentIndex];
+    lightboxImg.alt = 'Village photo ' + (currentIndex + 1);
+    lightboxCounter.textContent = (currentIndex + 1) + ' / ' + galleryImgs.length;
+  }
+  function closeLightbox(){
+    lightbox.classList.remove('active');
+  }
+  function showPrev(){
+    currentIndex = (currentIndex - 1 + galleryImgs.length) % galleryImgs.length;
+    updateLightbox();
+  }
+  function showNext(){
+    currentIndex = (currentIndex + 1) % galleryImgs.length;
+    updateLightbox();
+  }
+
+  lightboxClose.addEventListener('click', closeLightbox);
+  lightboxPrev.addEventListener('click', showPrev);
+  lightboxNext.addEventListener('click', showNext);
+  lightbox.addEventListener('click', (e) => { if(e.target === lightbox) closeLightbox(); });
+  document.addEventListener('keydown', (e) => {
+    if(!lightbox.classList.contains('active')) return;
+    if(e.key === 'Escape') closeLightbox();
+    if(e.key === 'ArrowLeft') showPrev();
+    if(e.key === 'ArrowRight') showNext();
+  });
+
+  function appendGalleryItems(urls, startIndex){
+    if(!urls.length) return;
+    const frag = document.createDocumentFragment();
+    urls.forEach((url, i) => {
+      const globalIndex = startIndex + i;
+      const item = document.createElement('div');
+      item.className = 'gallery-item';
+      item.dataset.index = globalIndex;
+      item.innerHTML = `
+        <div class="frame"><img src="${url}" alt="My village photo ${globalIndex + 1}" loading="${globalIndex < 4 ? 'eager' : 'lazy'}" ${globalIndex < 2 ? 'fetchpriority="high"' : ''} decoding="async"></div>
+        <span class="zoom-icon"><i class="fas fa-expand"></i> view</span>
+      `;
+      item.addEventListener('click', () => openLightbox(Number(item.dataset.index)));
+      registerReveal(item, i % 4);
+      frag.appendChild(item);
+    });
+    galleryGrid.appendChild(frag);
+    addPunches();
+  }
+
+  async function findVillagePicturesProgressive(){
+    let consecutiveMisses = 0;
+    let firstBatchRendered = false;
+
+    for (let start = 1; start <= VILLAGE_MAX_CHECK; start += VILLAGE_BATCH_SIZE){
+      const batchNums = [];
+      for (let n = start; n < start + VILLAGE_BATCH_SIZE && n <= VILLAGE_MAX_CHECK; n++){
+        batchNums.push(n);
+      }
+      // Check the whole batch of numbers in parallel.
+      // eslint-disable-next-line no-await-in-loop
+      const batchResults = await Promise.all(batchNums.map(checkOneNumber));
+      const batchFound = batchResults.filter(Boolean);
+
+      if (batchFound.length){
+        if (!firstBatchRendered){
+          galleryStatus.remove();
+          firstBatchRendered = true;
+        }
+        appendGalleryItems(batchFound, galleryImgs.length);
+        galleryImgs = galleryImgs.concat(batchFound);
+        consecutiveMisses = 0;
+      } else {
+        consecutiveMisses += batchNums.length;
+      }
+
+      if (consecutiveMisses >= VILLAGE_BATCH_SIZE + VILLAGE_MAX_GAP && galleryImgs.length > 0){
+        break; // several batches in a row with nothing new — stop probing
+      }
+    }
+  }
+
+  (async function initVillageGallery(){
+    const manifestUrls = await loadVillageManifest();
+
+    if (manifestUrls){
+      // Fast path: everything is known up front, render it all at once.
+      galleryStatus.remove();
+      galleryImgs = manifestUrls;
+      appendGalleryItems(manifestUrls, 0);
+      return;
+    }
+
+    // Fallback path: no manifest.json found, guess filenames progressively.
+    await findVillagePicturesProgressive();
+
+    if (galleryImgs.length === 0){
+      galleryStatus.textContent = 'No photos found yet — add picture-01.jpg, picture-02.jpg... to the village-picture folder.';
+    }
+  })();
+</script>
+
+</body>
+</html>
